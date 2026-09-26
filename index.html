@@ -879,22 +879,38 @@ const TTS = {
     return es;
   },
   arVoice:null,
+  /* Android: cancel() es asíncrono y puede borrar la frase que se pide justo después;
+     las voces cambian de objeto al recargarse; «es_ES» no es un código válido. Se tienen en cuenta aquí. */
+  android: /android/i.test(navigator.userAgent), lastErr: '', _u: null,
+  fresh(v){ if (!v) return null; return speechSynthesis.getVoices().find(x => x.voiceURI === v.voiceURI) || null; },
   speak(text, o = {}){
     if (!o.keep){ this.seq++; if (curAudio){ curAudio.pause(); curAudio = null; } }
     return new Promise(res => {
       if (!this.has || !text){ res(); return; }
-      try { speechSynthesis.cancel(); } catch(e){}
       if (!this.voice) this.pick();
-      const u = new SpeechSynthesisUtterance(text);
-      const v = o.voice || this.voice;
-      u.lang = v ? v.lang : 'es-ES';
-      if (v) u.voice = v;
-      u.rate = o.rate || S.settings.rate; u.pitch = 1.05;
-      let done = false;
+      const busy = speechSynthesis.speaking || speechSynthesis.pending;
+      if (busy) try { speechSynthesis.cancel(); } catch(e){}
+      let done = false, to = null, retried = false;
       const fin = () => { if (done) return; done = true; clearTimeout(to); res(); };
-      u.onend = fin; u.onerror = fin;
-      const to = setTimeout(fin, 1800 + text.length * 170 / u.rate);
-      setTimeout(() => { try { speechSynthesis.speak(u); } catch(e){ fin(); } }, 40);
+      const rate = o.rate || S.settings.rate;
+      const go = useVoice => {
+        const u = new SpeechSynthesisUtterance(text);
+        const v = useVoice ? this.fresh(o.voice || this.voice) : null;
+        const lang = ((v && v.lang) || (o.voice ? o.voice.lang : 'es-ES')).replace('_', '-');
+        u.lang = lang; if (v) u.voice = v;
+        u.rate = rate; u.pitch = 1.05;
+        u.onend = fin;
+        u.onerror = e => {
+          this.lastErr = (e && e.error) || 'error';
+          /* si falla con la voz elegida, se reintenta una vez con la voz por defecto del idioma */
+          if (!retried && v && this.lastErr !== 'interrupted' && this.lastErr !== 'canceled'){ retried = true; setTimeout(() => go(false), 60); return; }
+          fin();
+        };
+        this._u = u; /* evita que el navegador la descarte antes de terminar */
+        try { if (!this.android && speechSynthesis.paused) speechSynthesis.resume(); speechSynthesis.speak(u); } catch(e){ fin(); }
+      };
+      to = setTimeout(fin, 2500 + text.length * 170 / rate);
+      setTimeout(() => go(true), busy ? (this.android ? 250 : 60) : 0);
     });
   },
   stop(){ this.seq++; if (curAudio){ curAudio.pause(); curAudio = null; } if (this.has) try { speechSynthesis.cancel(); } catch(e){} }
@@ -1870,7 +1886,7 @@ function tVoz(body){
     <div class="card"><h3>Sonidos</h3><label class="row" style="gap:10px;font-weight:700;color:var(--ink)"><input type="checkbox" id="t-fx" style="width:26px;height:26px" ${S.settings.fx ? 'checked' : ''}> Efectos de acierto y error</label></div>`;
   $('#t-voice').onchange = e => { S.settings.voice = e.target.value; save(); TTS.pick(); };
   $('#t-rate').oninput = e => { S.settings.rate = +e.target.value; $('#t-rv').textContent = S.settings.rate; save(); };
-  $('#t-test').onclick = () => TTS.speak('Mi mamá me mima. Pa, pe, pi, po, pu.');
+  $('#t-test').onclick = async () => { TTS.lastErr = ''; await TTS.speak('Mi mamá me mima. Pa, pe, pi, po, pu.'); if (TTS.lastErr && TTS.lastErr !== 'interrupted') toast('La voz ha dado un error: ' + TTS.lastErr + '. Prueba otra voz o reinicia el navegador.'); else if (!speechSynthesis.getVoices().length) toast('Este navegador no tiene voces instaladas'); };
   $('#t-arsp').onchange = e => { S.settings.arSpeak = e.target.checked; save(); };
   $('#t-var').onchange = e => { S.settings.arVariant = e.target.value; save(); applyVariant(); toast(isDar() ? 'Ayudas en dariya' : 'Ayudas en árabe estándar'); };
   $('#t-biall').onchange = e => { S.settings.biAll = e.target.checked; save(); };
