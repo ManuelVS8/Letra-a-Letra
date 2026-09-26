@@ -825,8 +825,7 @@ const decodable = (w, i) => { const kn = knownAt(i); return tokenize(w).every(t 
 /* Las voces del sistema deletrean algunas sílabas sueltas (fla → «efe ele a») y la tilde
    solo arregla algunas (flá, jú) y estropea otras (mó, jó, plé). Por eso la sílaba se envía tal cual,
    salvo las que se ha comprobado que mejoran. Para el resto, lo seguro es grabar la voz del maestro. */
-/* il, ol, ul: la voz las deletrea; con hache muda delante se leen como palabra */
-const SAY_FIX = {ha:'a',he:'e',hi:'i',ho:'o',hu:'u',ju:'jú',fla:'flá',il:'hil',ol:'hol',ul:'hul'};
+const SAY_FIX = {ha:'a',he:'e',hi:'i',ho:'o',hu:'u',ju:'jú',fla:'flá'};
 function sayAuto(s){
   const p = plain(s);
   if (SAY_FIX[p]) return SAY_FIX[p];
@@ -1865,7 +1864,7 @@ function tVoz(body){
     ${arList.length ? '<div class="row" style="margin-top:10px"><button class="btn small" id="t-artest">🔊 Probar árabe</button></div>' : ''}</div>
     <div class="card"><h3>Pronunciación de sílabas</h3><p>La voz del sistema a veces deletrea una sílaba suelta o la lee en otro idioma. La solución más segura es <b>grabar tu voz</b> (⏺): la app usará tu grabación en todas las actividades. También puedes escribir otra forma de decirla y probarla.</p>
     <div class="field"><label for="t-pl">Letra</label><select id="t-pl">${order().filter(x => !x.vowel).map(x => `<option value="${x.id}">${esc(x.show)}</option>`).join('')}</select></div>
-    <div class="row" style="margin-bottom:10px"><button class="btn small primary" id="t-recall">⏺ Grabar todas seguidas</button></div>
+    <div class="row" style="margin-bottom:10px"><button class="btn small sun" id="t-review">🔎 Revisar todas las sílabas</button>${(S.settings.badSyl || []).filter(k => !REC.has(k)).length ? `<button class="btn small danger" id="t-recbad">⏺ Grabar las ${(S.settings.badSyl || []).filter(k => !REC.has(k)).length} marcadas</button>` : ''}<button class="btn small primary" id="t-recall">⏺ Grabar esta letra seguida</button></div>
     <div id="t-prows" style="display:grid;gap:8px"></div></div>
     <div class="card"><h3>Sonidos</h3><label class="row" style="gap:10px;font-weight:700;color:var(--ink)"><input type="checkbox" id="t-fx" style="width:26px;height:26px" ${S.settings.fx ? 'checked' : ''}> Efectos de acierto y error</label></div>`;
   $('#t-voice').onchange = e => { S.settings.voice = e.target.value; save(); TTS.pick(); };
@@ -1888,6 +1887,8 @@ function tVoz(body){
     $('#t-recall').onclick = () => recordAll([...l.sil.flat(), ...(l.inv || [])], drawPron);
   };
   $('#t-pl').onchange = drawPron; drawPron();
+  $('#t-review').onclick = () => reviewAll();
+  const rb = $('#t-recbad'); if (rb) rb.onclick = () => recordAll((S.settings.badSyl || []).filter(k => !REC.has(k)), () => { S.settings.badSyl = (S.settings.badSyl || []).filter(k => !REC.has(k)); save(); renderTeacher(); });
   const at = $('#t-artest'); if (at) at.onclick = () => TTS.speak('مرحبًا! هيا نقرأ', {voice: TTS.arVoice});
 }
 function tCopia(body){
@@ -2000,6 +2001,43 @@ if ('serviceWorker' in navigator && location.protocol !== 'file:'){
   navigator.serviceWorker.addEventListener('controllerchange', () => { if (!reloaded && navigator.serviceWorker.controller){ reloaded = true; toast('App actualizada a la última versión'); } });
 }
 updateInstallBtn();
+
+/* ---------- revisar todas las sílabas con la voz de este equipo ---------- */
+function reviewAll(){
+  TTS.stop();
+  const all = [];
+  order().filter(l => !l.vowel).forEach(l => [...l.sil.flat(), ...(l.inv || [])].forEach(s => { const k = plain(s); if (!all.includes(k) && !REC.has(k)) all.push(k); }));
+  const bad = [];
+  let j = 0, done = false;
+  const back = document.createElement('div'); back.className = 'modal-back';
+  back.innerHTML = `<div class="modal" style="text-align:center"><h3>Revisar la voz</h3>
+    <p style="color:var(--soft);margin:0">Escucha cada sílaba y marca si la voz la dice bien. Las que marques como mal podrás grabarlas con tu voz.</p>
+    <button class="lig" id="rv-s" style="font-size:4.6rem;line-height:1.8;color:var(--red);background:none;border:0"></button><p id="rv-n" style="color:var(--soft);margin:0 0 12px"></p>
+    <div class="row center" style="justify-content:center"><button class="btn danger" id="rv-bad">❌ Mal</button><button class="btn" id="rv-rep">🔁 Repetir</button><button class="btn primary" id="rv-ok">✅ Bien</button></div>
+    <div class="row center" style="justify-content:center;margin-top:12px"><button class="btn small" id="rv-x">Terminar</button></div></div>`;
+  document.body.appendChild(back);
+  const q = sel => back.querySelector(sel);
+  const show = () => {
+    if (j >= all.length) return end();
+    q('#rv-s').textContent = all[j]; q('#rv-n').textContent = `${j + 1} de ${all.length}` + (bad.length ? `  |  mal: ${bad.length}` : '');
+    speakSyl(all[j]);
+  };
+  const end = () => {
+    if (done) return; done = true; TTS.stop();
+    S.settings.badSyl = [...new Set([...(S.settings.badSyl || []), ...bad])].filter(k => !REC.has(k)); save();
+    const n = S.settings.badSyl.length;
+    q('.modal').innerHTML = `<h3>Revisión terminada</h3>${n ? `<p>Sílabas que la voz dice mal:</p><p class="lig" style="font-size:1.8rem;line-height:2;color:var(--red)">${S.settings.badSyl.map(esc).join('  ')}</p>` : '<p>La voz de este equipo dice bien todas las sílabas revisadas.</p>'}
+      <div class="row center" style="justify-content:center">${n ? `<button class="btn primary" id="rv-rec">⏺ Grabarlas ahora</button>` : ''}<button class="btn" id="rv-close">Cerrar</button></div>`;
+    q('#rv-close').onclick = () => { back.remove(); renderTeacher(); };
+    if (n) q('#rv-rec').onclick = () => { back.remove(); recordAll(S.settings.badSyl.slice(), () => { S.settings.badSyl = S.settings.badSyl.filter(k => !REC.has(k)); save(); renderTeacher(); }); };
+  };
+  q('#rv-ok').onclick = () => { j++; show(); };
+  q('#rv-bad').onclick = () => { bad.push(all[j]); j++; show(); };
+  q('#rv-rep').onclick = () => speakSyl(all[j]);
+  q('#rv-s').onclick = () => speakSyl(all[j]);
+  q('#rv-x').onclick = end;
+  show();
+}
 
 /* ================== INICIO ================== */
 loadRecs();
