@@ -1893,7 +1893,7 @@ function tVoz(body){
     <div class="card"><h3>Sonidos</h3><label class="row" style="gap:10px;font-weight:700;color:var(--ink)"><input type="checkbox" id="t-fx" style="width:26px;height:26px" ${S.settings.fx ? 'checked' : ''}> Efectos de acierto y error</label></div>`;
   $('#t-voice').onchange = e => { S.settings.voice = e.target.value; save(); TTS.pick(); };
   $('#t-rate').oninput = e => { S.settings.rate = +e.target.value; $('#t-rv').textContent = S.settings.rate; save(); };
-  $('#t-test').onclick = async () => { TTS.lastErr = ''; await TTS.speak('Mi mamá me mima. Pa, pe, pi, po, pu.'); if (TTS.lastErr && TTS.lastErr !== 'interrupted') toast('La voz ha dado un error: ' + TTS.lastErr + '. Prueba otra voz o reinicia el navegador.'); else if (!speechSynthesis.getVoices().length) toast('Este navegador no tiene voces instaladas'); };
+  $('#t-test').onclick = async () => { TTS.lastErr = ''; await TTS.speak('Mi mamá me mima. Papá pule el palo.'); if (TTS.lastErr && TTS.lastErr !== 'interrupted') toast('La voz ha dado un error: ' + TTS.lastErr + '. Prueba otra voz o reinicia el navegador.'); else if (!speechSynthesis.getVoices().length) toast('Este navegador no tiene voces instaladas'); };
   $('#t-arsp').onchange = e => { S.settings.arSpeak = e.target.checked; save(); };
   $('#t-var').onchange = e => { S.settings.arVariant = e.target.value; save(); applyVariant(); toast(isDar() ? 'Ayudas en dariya' : 'Ayudas en árabe estándar'); };
   $('#t-biall').onchange = e => { S.settings.biAll = e.target.checked; save(); };
