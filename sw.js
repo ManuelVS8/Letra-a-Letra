@@ -1,5 +1,5 @@
 /* Letra a letra | service worker: funciona sin conexión y se actualiza solo */
-const VERSION = 'letra-a-letra-v6';
+const VERSION = 'letra-a-letra-v7';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './logo.png',
   './icons/icon-192.png', './icons/icon-512.png', './icons/icon-maskable-512.png', './icons/apple-touch-icon.png'];
 
