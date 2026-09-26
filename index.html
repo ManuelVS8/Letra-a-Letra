@@ -825,7 +825,8 @@ const decodable = (w, i) => { const kn = knownAt(i); return tokenize(w).every(t 
 /* Las voces del sistema deletrean algunas sílabas sueltas (fla → «efe ele a») y la tilde
    solo arregla algunas (flá, jú) y estropea otras (mó, jó, plé). Por eso la sílaba se envía tal cual,
    salvo las que se ha comprobado que mejoran. Para el resto, lo seguro es grabar la voz del maestro. */
-const SAY_FIX = {ha:'a',he:'e',hi:'i',ho:'o',hu:'u',ju:'jú',fla:'flá'};
+/* il, ol, ul: la voz las deletrea; con hache muda delante se leen como palabra */
+const SAY_FIX = {ha:'a',he:'e',hi:'i',ho:'o',hu:'u',ju:'jú',fla:'flá',il:'hil',ol:'hol',ul:'hul'};
 function sayAuto(s){
   const p = plain(s);
   if (SAY_FIX[p]) return SAY_FIX[p];
