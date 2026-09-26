@@ -321,6 +321,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:4px solid 
     </div>
     <div class="row center" style="margin-top:18px"><button class="btn small hidden" id="btn-install">📲 Instalar la app</button></div>
     <div class="row center" style="margin-top:28px" id="who-grid"></div>
+    <div class="row center" style="margin-top:22px"><a class="btn small" style="text-decoration:none" href="cartilla-letra-a-letra.pdf" download data-pdf>🖨️ Cartilla para imprimir (PDF)</a></div>
   </div>
 </section>
 
@@ -377,6 +378,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:4px solid 
       <button class="btn small" id="bk-bigger" aria-label="Letra más grande">A+</button>
       <button class="btn small" id="bk-syl">Sílabas de colores</button>
       <button class="ib" id="bk-next" aria-label="Página siguiente">▶️</button>
+      <a class="ib" href="cartilla-letra-a-letra.pdf" download data-pdf aria-label="Descargar la cartilla en PDF" title="Cartilla para imprimir (PDF)" style="text-decoration:none">🖨️</a>
     </div>
     <div class="page" id="page"></div>
   </div>
@@ -402,7 +404,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:4px solid 
       <button data-tab="alumnos" class="on">Progreso</button>
       <button data-tab="letras">Orden de letras</button>
       <button data-tab="voz">Voz y sonido</button>
-      <button data-tab="copia">Copia de seguridad</button>
+      <button data-tab="copia">Copia y restaurar</button>
     </div>
     <div id="t-body"></div>
   </div>
@@ -1916,6 +1918,16 @@ function tCopia(body){
     <div class="row"><button class="btn primary small" id="t-exp">⬇️ Descargar copia</button><button class="btn small" id="t-imp">⬆️ Cargar copia</button><input type="file" id="t-file" accept=".json,application/json" class="hidden"></div></div>
     <div class="card"><h3>PIN del maestro</h3><div class="field"><label for="t-pin">Nuevo PIN (4 números)</label><input id="t-pin" inputmode="numeric" maxlength="4" pattern="[0-9]*" style="max-width:160px"></div>
     <button class="btn small" id="t-savepin">Guardar PIN</button></div>
+    <div class="card"><h3>↺ Restaurar valores originales</h3><p>Deshace los cambios de configuración de este dispositivo. Las estrellas no se tocan.</p>
+      <div style="display:grid;gap:8px;margin-bottom:12px">
+        <label style="display:flex;gap:10px;align-items:center"><input type="checkbox" data-r="order" checked style="width:24px;height:24px;flex:0 0 auto"> <span><b>Orden de las letras</b> <span style="color:var(--soft)">(vocales, p, l, m, t, s, n, d, f, r, rr, b, v, c, g…)</span></span></label>
+        <label style="display:flex;gap:10px;align-items:center"><input type="checkbox" data-r="voz" checked style="width:24px;height:24px;flex:0 0 auto"> <span><b>Voz y sonido</b> <span style="color:var(--soft)">(voz automática, velocidad 0,8, dariya, doble idioma, efectos)</span></span></label>
+        <label style="display:flex;gap:10px;align-items:center"><input type="checkbox" data-r="pron" checked style="width:24px;height:24px;flex:0 0 auto"> <span><b>Pronunciación escrita de sílabas</b> <span style="color:var(--soft)">(lo escrito a mano en el panel)</span></span></label>
+        <label style="display:flex;gap:10px;align-items:center"><input type="checkbox" data-r="book" checked style="width:24px;height:24px;flex:0 0 auto"> <span><b>Cartilla en pantalla</b> <span style="color:var(--soft)">(tamaño de letra y sílabas de colores)</span></span></label>
+        <label style="display:flex;gap:10px;align-items:center"><input type="checkbox" data-r="rec" style="width:24px;height:24px;flex:0 0 auto"> <span><b>Grabaciones de sílabas con tu voz</b> <span style="color:var(--soft)">(se borran)</span></span></label>
+        <label style="display:flex;gap:10px;align-items:center"><input type="checkbox" data-r="pin" style="width:24px;height:24px;flex:0 0 auto"> <span><b>PIN del maestro</b> <span style="color:var(--soft)">(vuelve a 1234)</span></span></label>
+      </div>
+      <button class="btn small primary" id="t-restore">↺ Restaurar lo marcado</button></div>
     <div class="card"><h3>Borrar todo</h3><p>Elimina las estrellas, los ajustes y las grabaciones de este navegador.</p><button class="btn small danger" id="t-wipe">🗑️ Borrar todos los datos</button></div>`;
   $('#t-exp').onclick = async () => {
     const audio = {};
@@ -1944,6 +1956,20 @@ function tCopia(body){
     r.readAsText(f);
   };
   $('#t-savepin').onclick = () => { const v = $('#t-pin').value.trim(); if (!/^\d{4}$/.test(v)){ toast('El PIN debe tener 4 números'); return; } S.settings.pin = v; save(); $('#t-pin').value = ''; toast('PIN guardado'); };
+  $('#t-restore').onclick = async () => {
+    const sel = [...body.querySelectorAll('[data-r]:checked')].map(x => x.dataset.r);
+    if (!sel.length){ toast('Marca al menos una opción'); return; }
+    const names = {order: 'el orden de las letras', voz: 'la voz y el sonido', pron: 'la pronunciación escrita', book: 'la cartilla en pantalla', rec: 'las grabaciones de tu voz', pin: 'el PIN'};
+    if (!await askYesNo('Restaurar valores originales', 'Se restaurará: ' + sel.map(k => names[k]).join(', ') + '.', 'Restaurar', sel.includes('rec'))) return;
+    const d = blankState().settings, st = S.settings;
+    if (sel.includes('order')){ st.order = [...d.order]; resetCache(); }
+    if (sel.includes('voz')){ ['voice', 'rate', 'fx', 'arSpeak', 'biAll', 'arVariant'].forEach(k => st[k] = d[k]); applyVariant(); TTS.pick(); }
+    if (sel.includes('pron')) st.pron = {};
+    if (sel.includes('book')){ st.bookSize = d.bookSize; st.sylColors = d.sylColors; }
+    if (sel.includes('pin')) st.pin = d.pin;
+    if (sel.includes('rec')){ await RecDB.clear().catch(() => {}); await loadRecs(); }
+    save(); renderTeacher(); toast('Valores originales restaurados');
+  };
   $('#t-wipe').onclick = async () => { if (await askYesNo('Borrar todos los datos', 'Se perderá todo el progreso de este navegador. Esta acción no se puede deshacer.', 'Borrar todo', true)){ S = blankState(); resetCache(); save(); await RecDB.clear().catch(() => {}); await loadRecs(); renderTeacher(); toast('Datos borrados'); } };
 }
 
@@ -2000,6 +2026,20 @@ async function recordAll(list, after){
   }
   releaseMic(); back.remove(); after(); toast('Grabaciones guardadas');
 }
+
+/* ================== CARTILLA EN PDF ================== */
+/* El PDF está en la misma carpeta de GitHub. Antes de descargar se comprueba que existe y que hay conexión. */
+document.querySelectorAll('[data-pdf]').forEach(a => a.addEventListener('click', async e => {
+  e.preventDefault();
+  if (!navigator.onLine){ toast('Necesitas conexión a internet para descargar la cartilla'); return; }
+  try {
+    const r = await fetch(a.getAttribute('href'), {method: 'HEAD', cache: 'no-store'});
+    if (!r.ok) throw 0;
+    const d = document.createElement('a'); d.href = a.getAttribute('href'); d.download = 'Cartilla - Letra a letra.pdf';
+    document.body.appendChild(d); d.click(); d.remove();
+    toast('Descargando la cartilla…');
+  } catch(err){ toast('La cartilla todavía no está disponible'); }
+}));
 
 /* ================== APP INSTALABLE ================== */
 let installEvt = null;
