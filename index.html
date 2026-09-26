@@ -433,13 +433,13 @@ const LESSONS = [
  {id:'rr',show:'rr',up:'R',name:'erre',keys:['rr'],clave:['perro','🐶'],sil:[['rra','rre','rri','rro','rru'],['ra','re','ri','ro','ru']],
   intro:'Esta es la erre. Suena fuerte. Entre vocales se escriben dos: perro. Al principio de la palabra, solo una: rosa.',
   hunt:{t:['rr'],d:['r','n','m','ll','R']},hsay:'Toca todas las erre dobles.'},
+ {id:'b',show:'b',up:'B',name:'be',keys:['b'],clave:['bota','👢'],sil:[['ba','be','bi','bo','bu']]},
+ {id:'v',show:'v',up:'V',name:'uve',keys:['v'],clave:['vaca','🐄'],sil:[['va','ve','vi','vo','vu']]},
  {id:'c',show:'c',up:'C',name:'ce',keys:['c','qu'],clave:['casa','🏠'],sil:[['ca','co','cu'],['que','qui']],
   intro:'Esta es la ce, ce de casa. Con la e y la i escribimos cu y u. Escucha cómo suena.',
   hunt:{t:['c','C','qu'],d:['o','e','a','q','g']},hsay:'Toca todas las ce y las cu con u.'},
  {id:'g',show:'g',up:'G',name:'ge',keys:['g'],clave:['gato','🐱'],sil:[['ga','go','gu'],['gue','gui']],
   intro:'Esta es la ge, ge de gato. Con la e y la i ponemos una u en medio. Escucha cómo suena.'},
- {id:'b',show:'b',up:'B',name:'be',keys:['b'],clave:['bota','👢'],sil:[['ba','be','bi','bo','bu']]},
- {id:'v',show:'v',up:'V',name:'uve',keys:['v'],clave:['vaca','🐄'],sil:[['va','ve','vi','vo','vu']]},
  {id:'ñ',show:'ñ',up:'Ñ',name:'eñe',keys:['ñ'],clave:['piña','🍍'],sil:[['ña','ñe','ñi','ño','ñu']]},
  {id:'ll',show:'ll',up:'Ll',name:'elle',keys:['ll'],clave:['llave','🔑'],sil:[['lla','lle','lli','llo','llu']],
   hunt:{t:['ll','Ll'],d:['l','L','h','il','ch']},hsay:'Toca todas las elle.'},
@@ -520,8 +520,8 @@ const SENTENCES = [
  'La rana salta al río.','El perro de Ramón.','Rosa pone la ropa.','La rata se asoma.','El perro mira al ratón.','Rita se ríe.','Rafa rema en el río.','Roma tiene torres.','El reno mira la tierra.','Mi perrito salta arriba.',
  'Paco come queso.','Carmen come coco.','El mosquito pica.','La cama es cómoda.','Esa camisa es de Paco.','El pato come en el parque.','Quique tiene un caracol.','La foca toca la corona.','Carmen canta en casa.','¿Quién come tacos?','La mosca se posa en el queso.','Paquito quiere una cometa.','El camión corre.',
  'El gato toma agua.','Mi amigo toca la guitarra.','El mago saca un gorro.','La tortuga camina.','El gusano come una pera.','Olga pega la goma.','Tengo un gato gordo.','Mi amiga Olga toca la gaita.','Me pongo el guante.','El lagarto toma el sol.','El fuego es caliente.',
- 'Bea bebe agua.','El bebé toma la bota.','El burro come.','El lobo sube al barco.','Mi abuela es buena.','La bandera es bonita.','El abuelo toca el tambor.','Mi abuelo me da un beso.','El barco sale del puerto.',
- 'La vaca bebe.','Vamos a ver la nave.','La uva es morada.','El avión vuela.','Tengo un vaso de agua.','Eva ve la nieve.','Violeta toca el violín.','El pavo vive en el campo.','Valeria tiene un vestido verde.',
+ 'Bea bebe limonada.','El lobo sube a la loma.','La bota es de Bea.','Mi abuela me da un beso.','El burro sube al monte.','Bea bebe agua.','El bebé toma la bota.','El burro come.','El lobo sube al barco.','Mi abuela es buena.','La bandera es bonita.','El abuelo toca el tambor.','Mi abuelo me da un beso.','El barco sale del puerto.',
+ 'La vaca bebe.','La nave vuela alto.','Mi vestido es nuevo.','Violeta ve una vela.','Vamos a la fuente.','Eva vive en Roma.','Vamos a ver la nave.','La uva es morada.','El avión vuela.','Tengo un vaso de agua.','Eva ve la nieve.','Violeta toca el violín.','El pavo vive en el campo.','Valeria tiene un vestido verde.',
  'La niña come piña.','La araña sube a la caña.','El niño tiene sueño.','Mañana vamos a la montaña.','Toño se baña.','En otoño caen las castañas.','Mi muñeca es pequeña.','El niño se muerde la uña.',
  'La gallina tiene un pollito.','La llave está en la silla.','Llueve en la calle.','La ballena nada.','El caballo come.','La ardilla sube al pino.','Ella lleva un anillo.','Papá pone la paella.','Me gusta la galleta.',
  'Yo como yogur.','El payaso tiene un yoyó.','El rey y la reina.','Mayo es muy bonito.','El yate navega en el mar.','Ayer llovió.','Yolanda ayuda a su mamá.','Me gusta la mayonesa.',
@@ -794,6 +794,9 @@ function blankState(){
 function fixState(d){
   const b = blankState();
   d.settings = Object.assign(b.settings, d.settings || {});
+  /* si el orden guardado es el antiguo de fábrica (b y v detrás de c y g), se pasa al nuevo */
+  const OLD = 'a,e,i,o,u,p,l,m,t,s,n,d,f,r,rr,c,g,b,v,ñ,ll,y,ch,j,ge,z,h,gü,x,k,w,TL,TR';
+  if ((d.settings.order || []).join(',') === OLD) d.settings.order = [...DEFAULT_ORDER];
   const o = (d.settings.order || []).filter(id => LBYID[id]);
   DEFAULT_ORDER.forEach(id => { if (!o.includes(id)) o.push(id); });
   d.settings.order = o;
@@ -1865,7 +1868,7 @@ function tLetras(body){
     });
     ul.appendChild(li);
   });
-  $('#t-def').onclick = async () => { if (await askYesNo('Orden recomendado', 'Se volverá al orden inicial: vocales, p, l, m, t, s, n, d…', 'Restablecer')){ S.settings.order = [...DEFAULT_ORDER]; resetCache(); save(); renderTeacher(); } };
+  $('#t-def').onclick = async () => { if (await askYesNo('Orden recomendado', 'Se volverá al orden inicial: vocales, p, l, m, t, s, n, d, f, r, rr, b, v, c, g…', 'Restablecer')){ S.settings.order = [...DEFAULT_ORDER]; resetCache(); save(); renderTeacher(); } };
 }
 function tVoz(body){
   const es = TTS.pick();
