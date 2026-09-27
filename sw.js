@@ -1,5 +1,7 @@
-/* Letra a letra | service worker: funciona sin conexión y se actualiza solo */
-const VERSION = 'letra-a-letra-v14';
+/* Letra a letra | service worker: funciona sin conexión y se actualiza solo.
+   Solo borra sus propias cachés: en github.io varias apps comparten el mismo origen. */
+const PREFIX = 'letra-a-letra-v';
+const VERSION = PREFIX + '17';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './logo.png',
   './icons/icon-192.png', './icons/icon-512.png', './icons/icon-maskable-512.png', './icons/apple-touch-icon.png'];
 
@@ -9,7 +11,7 @@ self.addEventListener('install', e => {
 
 self.addEventListener('activate', e => {
   e.waitUntil(caches.keys()
-    .then(keys => Promise.all(keys.filter(k => k !== VERSION).map(k => caches.delete(k))))
+    .then(keys => Promise.all(keys.filter(k => k.startsWith(PREFIX) && k !== VERSION).map(k => caches.delete(k))))
     .then(() => self.clients.claim()));
 });
 
