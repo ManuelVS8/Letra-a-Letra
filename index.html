@@ -949,7 +949,7 @@ const HUNT_CONF = {p:['q','b','d'],b:['d','p','h'],d:['b','p','q'],m:['n','u','w
    (carpeta audio/, generada con generar_audios.pyw) y solo si falta alguno recurre a la voz del sistema.
    Los audios van en paquetes: se descargan al necesitarlos y el service worker los guarda para usarlos sin conexión. */
 const AUD = {
-  base: './audio/', idx: null, packs: [], urls: new Map(), ready: null, pending: false, BASE_RATE: 0.8,
+  base: './audios_listos/colegio/audio/', idx: null, packs: [], urls: new Map(), ready: null, pending: false, BASE_RATE: 0.8,
   MISS: 'letraALetra_faltan',
   key: t => String(t).normalize('NFC').replace(/\s+/g, ' ').trim().toLocaleLowerCase('es'),
   load(){
