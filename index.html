@@ -14,7 +14,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Playwrite+ES:wght@100..400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Playwrite+ES:wght@100..400&family=Noto+Naskh+Arabic:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root{
   --paper:#F3F7FC; --rule:#D3E3F4; --rule2:#8DB5DF; --margin:#F1A9AE;
@@ -54,6 +54,7 @@ body.f-may{--ltt:uppercase}
   animation:pop .45s cubic-bezier(.3,1.6,.5,1) both;max-width:90vw}
 .sol .se{font-size:clamp(4rem,16vw,6rem);line-height:1.1}
 .sol .ses{font-weight:700;color:var(--ink);font-size:clamp(2rem,8vw,3rem)}
+.sol .ar{font-size:clamp(1.8rem,7vw,2.6rem);font-weight:700}
 .screen.on{display:flex}
 .bar{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:10px;padding:10px 14px;
   background:rgba(243,247,252,.94);backdrop-filter:blur(6px);border-bottom:2px solid var(--rule2)}
@@ -274,7 +275,21 @@ body.f-may{--ltt:uppercase}
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:12px 20px;border-radius:16px;
   font-weight:700;z-index:60;box-shadow:0 5px 0 var(--ink-d);max-width:90vw;text-align:center}
 
-.rec-badge{font-size:.8rem;background:#E3F5F0;color:#0E6B5A;border-radius:10px;padding:0 6px;font-weight:700}
+/* ---------- árabe ---------- */
+.ar{direction:rtl;font-family:"Noto Naskh Arabic","Geeza Pro","Arial",sans-serif;color:#0E6B5A;font-size:1.25rem;margin:0;text-align:center;line-height:1.7}
+.ar-chip{direction:rtl;font-family:"Noto Naskh Arabic","Geeza Pro","Arial",sans-serif;background:#E3F5F0;color:#0E6B5A;border:2px solid #7FC8B6;
+  border-radius:30px;padding:2px 14px;font-size:1.2rem;line-height:1.8}
+.ar-badge{font-size:.8rem;background:#E3F5F0;color:#0E6B5A;border-radius:10px;padding:0 6px;font-weight:700}
+/* ---------- primeras palabras ---------- */
+.themes{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
+.theme{background:#fff;border:3px solid #0E6B5A;border-radius:20px;box-shadow:0 5px 0 #0E6B5A;padding:12px 8px;display:flex;flex-direction:column;align-items:center;gap:2px;min-height:140px;justify-content:center}
+.theme:active{transform:translateY(3px);box-shadow:0 2px 0 #0E6B5A}
+.theme .ic{font-size:2.8rem;line-height:1.1}
+.theme .lb{font-weight:700;color:var(--ink);text-align:center}
+.theme .ss{color:var(--sun-d);letter-spacing:2px;min-height:1.2em}
+.vcard{background:#fff;border:3px solid var(--rule2);border-radius:26px;box-shadow:0 6px 0 var(--rule2);padding:16px 26px;display:flex;flex-direction:column;align-items:center;gap:6px;min-width:min(420px,100%)}
+.vcard .es{font-weight:700;color:var(--ink);font-size:clamp(1.8rem,7vw,2.6rem);text-align:center}
+.intro-note{background:#E3F5F0;border:3px solid #7FC8B6;border-radius:18px;padding:10px 14px;margin-bottom:16px;color:#0E6B5A}
 
 /* ---------- repaso y álbum ---------- */
 .map-top{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin:2px 0 4px}
@@ -354,7 +369,9 @@ body.f-may{--ltt:uppercase}
     <div class="hero">
       <div class="school"><img src="logo.png" alt="Logo del CEIP Manuel Siurot" onerror="this.remove()"><span>CEIP Manuel Siurot</span></div>
       <h1><span class="inkline">Letra a letra</span></h1>
+      <p class="ar" lang="ar" dir="rtl" id="home-name" style="font-size:1.8rem;font-weight:700;margin:-10px 0 6px">حرف بحرف</p>
       <p>¡Vamos a leer y a escribir!</p>
+      <p class="ar" lang="ar" dir="rtl" id="home-ar">هيا نقرأ ونكتب!</p>
     </div>
     <div class="row center" style="margin-top:18px"><button class="btn small hidden" id="btn-install">📲 Instalar la app</button></div>
     <div class="row center" style="margin-top:28px" id="who-grid"></div>
@@ -368,6 +385,7 @@ body.f-may{--ltt:uppercase}
     <button class="ib" data-go="home" aria-label="Portada">🏠</button>
     <div class="grow"><h2 id="map-title"></h2></div>
     <span class="stars-pill" id="map-stars"></span>
+    <button class="ib" id="btn-voc" aria-label="Primeras palabras" style="border-color:#0E6B5A;box-shadow:0 3px 0 #0E6B5A">🗣️</button>
     <button class="ib sun" id="btn-book" aria-label="Abrir la cartilla">📕</button>
   </div>
   <div class="main"><div id="map"></div></div>
@@ -418,6 +436,15 @@ body.f-may{--ltt:uppercase}
     </div>
     <div class="page" id="page"></div>
   </div>
+</section>
+
+<!-- PRIMERAS PALABRAS -->
+<section class="screen" id="s-voc">
+  <div class="bar">
+    <button class="ib" id="btn-voc-back" aria-label="Volver">⬅️</button>
+    <div class="grow"><h2 id="voc-title">Primeras palabras</h2></div>
+  </div>
+  <div class="main" id="voc-main"></div>
 </section>
 
 <!-- ÁLBUM DE PEGATINAS -->
@@ -655,6 +682,166 @@ const WORDS = (() => {
 })();
 const sentWords = s => s.match(/[A-Za-zÁÉÍÓÚÜÑáéíóúüñ]+/g) || [];
 const SENTS = SENTENCES.map(s => ({s, keys: [...new Set(sentWords(s).flatMap(w => tokenize(w).map(t=>t.k)))]}));
+/* ================== APOYO EN ÁRABE (árabe estándar) ================== */
+const AR_UI_MSA = {
+  comprende:'اقرأ الجملة والمس الصورة المناسبة', comprendeb:'انظر إلى الصورة والمس الجملة التي تصفها', ordena:'رتّب الكلمات لتكوين الجملة',
+  repasopoco:'تعلّم حرفين على الأقل أولًا', album:'ألبوم الملصقات: أكمل الحروف لتربح ملصقات', graba:'سجّل صوتك وأنت تقرأ ثم استمع إليه',
+  toca:'المس كل شيء لتسمعه', escucha:'استمع والمس ما تسمعه', vocal:'ما الصوت الناقص؟', traza:'ابدأ من النقطة الخضراء ومرّر إصبعك فوق الحرف الرمادي',
+  caza:'ابحث عن هذا الحرف والمسه', empieza:'بماذا تبدأ الكلمة؟', oyes:'أي مقطع تسمع في الكلمة؟', lee:'اقرأ الكلمة والمس صورتها',
+  forma:'استمع وكوّن الكلمة', dicta:'استمع واكتب الكلمة', cartilla:'اقرأ واستمع', repite:'استمع وكرّر بصوت عالٍ',
+  tocadib:'استمع والمس الصورة', fino:'استمع جيدًا: أيّهما تسمع؟', hola:'مرحبًا! هيا نقرأ', intro:'استمع إلى الحرف الجديد، ثم اختر نشاطًا', cerrada:'هذا الحرف مغلق. أكمل الحرف السابق', casi:'حاول مرة أخرى فوق الحرف الرمادي', vacio:'اكتب أولًا بإصبعك فوق الحرف', quien:'من سيقرأ اليوم؟', voc:'كلمات أولى', gana:'أحسنت! ربحت نجومًا', lectura:'اقرأ واستمع. المس الكلمات لتسمعها', brilla:'المس ما يلمع', conoces:'أحسنت! تعرّفت على الحرف'
+};
+const AR_MSA = Object.fromEntries(`papá=أبي|mamá=أمي|pie=قدم|pupa=جرح|lupa=عدسة مكبّرة|pila=بطارية|ola=موجة|pulpo=أخطبوط|papel=ورقة|mapa=خريطة|miel=عسل|
+tomate=طماطم|té=شاي|tele=تلفاز|pato=بطة|pelota=كرة|maleta=حقيبة سفر|moto=دراجة نارية|lata=علبة|patata=بطاطس|sopa=حساء|sapo=ضفدع|oso=دب|sol=شمس|
+seta=فطر|pasta=معكرونة|sal=ملح|seis=ستة|siete=سبعة|isla=جزيرة|nube=غيمة|mano=يد|luna=قمر|pino=شجرة صنوبر|antena=هوائي|limón=ليمون|melón=شمام|
+piano=بيانو|uno=واحد|pan=خبز|mono=قرد|patinete=سكوتر|pimiento=فلفل|dado=نرد|dedo=إصبع|dos=اثنان|moneda=قطعة نقدية|diente=سنّ|sandía=بطيخ|
+sandalia=صندل|foca=فقمة|foto=صورة|fideo=شعيرية|sofá=أريكة|fuente=نافورة|delfín=دلفين|fantasma=شبح|elefante=فيل|teléfono=هاتف|pera=إجاص|
+loro=ببغاء|toro=ثور|sirena=حورية البحر|pirata=قرصان|mariposa=فراشة|dinero=نقود|tarta=كعكة|puerta=باب|ordenador=حاسوب|tenedor=شوكة|
+dinosaurio=ديناصور|perro=كلب|torre=برج|rata=جرذ|ratón=فأر|rosa=وردة|ropa=ملابس|río=نهر|reno=أيل|radio=مذياع|casa=بيت|cama=سرير|coco=جوز الهند|
+taco=تاكو|mosca=ذبابة|queso=جبن|mosquito=بعوضة|copa=كأس|cometa=طائرة ورقية|camión=شاحنة|camisa=قميص|caracol=حلزون|carta=رسالة|canoa=زورق|
+cactus=صبّار|corona=تاج|caramelo=حلوى|cuaderno=دفتر|carro=عربة|carne=لحم|gato=قط|gusano=دودة|gafas=نظارات|mago=ساحر|gorro=قبعة|tortuga=سلحفاة|
+gota=قطرة|guitarra=قيثارة|águila=نسر|regalo=هدية|fuego=نار|guante=قفاز|lagarto=سحلية|bota=جزمة|boca=فم|bebé=رضيع|bolsa=حقيبة|lobo=ذئب|barco=سفينة|
+bus=حافلة|abuelo=جدّ|abuela=جدّة|bandera=علم|beso=قبلة|árbol=شجرة|tambor=طبل|escoba=مكنسة|vaca=بقرة|vela=شمعة|uva=عنب|ventana=نافذة|nieve=ثلج|
+avión=طائرة|volcán=بركان|nave=سفينة فضاء|pavo=ديك رومي|violín=كمان|vestido=فستان|vaquero=راعي بقر|nueve=تسعة|niño=ولد|niña=بنت|uña=ظفر|piña=أناناس|
+araña=عنكبوت|montaña=جبل|castaña=كستناء|puño=قبضة|llave=مفتاح|lluvia=مطر|silla=كرسي|anillo=خاتم|gallina=دجاجة|pollito=كتكوت|ballena=حوت|
+galleta=بسكويت|llama=لاما|ardilla=سنجاب|caballo=حصان|paella=باييلا|martillo=مطرقة|botella=زجاجة|mantequilla=زبدة|yoyó=يويو|yate=يخت|payaso=مهرج|
+rayo=برق|rey=ملك|chocolate=شوكولاتة|coche=سيارة|leche=حليب|noche=ليل|ducha=دُش|ocho=ثمانية|chaqueta=سترة|cuchara=ملعقة|mochila=حقيبة ظهر|lechuga=خس|
+champú=شامبو|jirafa=زرافة|ojo=عين|oreja=أذن|abeja=نحلة|conejo=أرنب|reloj=ساعة|caja=صندوق|jabón=صابون|pájaro=عصفور|oveja=خروف|espejo=مرآة|
+tijeras=مقص|ajo=ثوم|girasol=عبّاد الشمس|gema=جوهرة|genio=جنّي|gimnasia=جمباز|colegio=مدرسة|zapato=حذاء|zumo=عصير|taza=فنجان|lazo=شريطة|zorro=ثعلب|
+pez=سمكة|lápiz=قلم رصاص|maíz=ذرة|cero=صفر|cine=سينما|cebolla=بصل|cepillo=فرشاة أسنان|cerdo=خنزير|cereza=كرز|calcetín=جورب|pizza=بيتزا|erizo=قنفذ|
+nariz=أنف|diez=عشرة|calabaza=يقطين|hada=جنّية|helado=مثلّجات|hoja=ورقة شجر|hueso=عظم|humo=دخان|hilo=خيط|hormiga=نملة|huevo=بيضة|hielo=جليد|búho=بومة|
+hotel=فندق|hospital=مستشفى|hamburguesa=همبرغر|hipopótamo=فرس النهر|zanahoria=جزر|helicóptero=مروحية|pingüino=بطريق|taxi=سيارة أجرة|saxofón=ساكسفون|
+boxeo=ملاكمة|koala=كوالا|kárate=كاراتيه|kimono=كيمونو|karaoke=كاريوكي|kiwi=كيوي|wifi=واي فاي|sándwich=شطيرة|pluma=ريشة|playa=شاطئ|plato=صحن|
+planta=نبتة|plátano=موز|flor=زهرة|globo=بالون|regla=مسطرة|blusa=بلوزة|bicicleta=دراجة|flan=كريم كراميل|ancla=مرساة|flamenco=نحام|iglesia=كنيسة|
+tren=قطار|fresa=فراولة|brazo=ذراع|cabra=ماعز|libro=كتاب|grifo=صنبور|dragón=تنين|tigre=نمر|trigo=قمح|estrella=نجمة|tres=ثلاثة|cuatro=أربعة|
+cocodrilo=تمساح|cebra=حمار وحشي|princesa=أميرة|trompeta=بوق|tractor=جرّار|sombrero=قبعة كبيرة|cangrejo=سلطعون|grillo=صرصور الليل|imán=مغناطيس|
+unicornio=حصان وحيد القرن|avión=طائرة|hola=مرحبًا|adiós=مع السلامة|buenos días=صباح الخير|gracias=شكرًا|por favor=من فضلك|sí=نعم|no=لا|
+tengo hambre=أنا جائع|tengo sed=أنا عطشان|quiero ir al baño=أريد الذهاب إلى الحمّام|no entiendo=لا أفهم|me duele=يؤلمني|ayúdame=ساعدني|
+maestra=المعلّمة|maestro=المعلّم|compañero=زميل|colores=ألوان|hermano=أخ|hermana=أخت|familia=عائلة|cabeza=رأس|pierna=ساق|pelo=شعر|agua=ماء|
+manzana=تفاحة|naranja=برتقالة|pollo=دجاج|arroz=أرز|pescado=سمك|león=أسد|rojo=أحمر|azul=أزرق|amarillo=أصفر|verde=أخضر|morado=بنفسجي|negro=أسود|
+blanco=أبيض|marrón=بنّي|color naranja=برتقالي|cinco=خمسة|pantalón=سروال|bufanda=وشاح|lámpara=مصباح|mesa=طاولة|micrófono=ميكروفون|murciélago=خفّاش|música=موسيقى|mundo=العالم|museo=متحف|tulipán=توليب|sushi=سوشي|donut=دونات|feria=مدينة الملاهي|furgoneta=شاحنة صغيرة|rugby=رغبي|rinoceronte=وحيد القرن|burrito=بوريتو|guepardo=فهد|vídeo=فيديو|voleibol=الكرة الطائرة|yegua=فرس|juguete=لعبة|waterpolo=كرة الماء|planeta=كوكب|trébol=برسيم|brócoli=بروكلي|suma=جمع|contento=سعيد|triste=حزين|enfadado=غاضب|asustado=خائف|cansado=متعب|sorprendido=متفاجئ|nervioso=متوتر|enfermo=مريض|tengo frío=أشعر بالبرد|tengo calor=أشعر بالحر|
+comer=يأكل|beber=يشرب|dormir=ينام|correr=يركض|saltar=يقفز|leer=يقرأ|escribir=يكتب|dibujar=يرسم|cantar=يغني|bailar=يرقص|jugar=يلعب|nadar=يسبح|andar=يمشي|
+sentarse=يجلس|escuchar=يستمع|hablar=يتكلم|lavar=يغسل|
+autobús=حافلة|ambulancia=سيارة إسعاف|coche de policía=سيارة الشرطة|camión de bomberos=سيارة الإطفاء|
+viento=رياح|tormenta=عاصفة|arcoíris=قوس قزح|hace calor=الجو حار|hace frío=الجو بارد|paraguas=مظلة|día=نهار|
+melocotón=خوخ|pepino=خيار|
+lavarse las manos=غسل اليدين|cepillo de dientes=فرشاة الأسنان|papel higiénico=ورق الحمّام|bañera=حوض الاستحمام|váter=المرحاض|pañuelo=منديل|
+mar=بحر|piedra=حجر|campo=حقل|bosque=غابة|
+médico=طبيب|policía=شرطي|bombero=إطفائي|cocinero=طبّاخ|agricultor=مزارع|piloto=طيّار|mecánico=ميكانيكي|pintor=رسّام|cartero=ساعي البريد|dentista=طبيب الأسنان|
+recreo=الاستراحة|coche de juguete=سيارة لعبة|puzle=أحجية|osito=دبدوب|escondite=الغمّيضة|muñeca=دمية|
+silencio=صمت|levanta la mano=ارفع يدك|siéntate=اجلس|escucha=استمع|mira=انظر|ponte en la fila=قف في الصف|recoge=رتّب أغراضك|comparte=شارك|espera=انتظر|ven aquí=تعال هنا|lávate las manos=اغسل يديك|muy bien=أحسنت|
+arriba=فوق|abajo=تحت|dentro=داخل|fuera=خارج|grande=كبير|pequeño=صغير|derecha=يمين|izquierda=يسار|abierto=مفتوح|cerrado=مغلق|caliente=ساخن|frío=بارد|
+círculo=دائرة|cuadrado=مربّع|triángulo=مثلث|corazón=قلب|rombo=معيّن|rectángulo=مستطيل`
+  .split('|').map(x => x.trim()).filter(Boolean).map(x => x.split('=')));
+
+/* ================== PRIMERAS PALABRAS ================== */
+const VOCAB = [
+  {id:'clase', ar:'التحية والقسم', ic:'👋', es:'Hola y clase', w:[['hola','👋'],['adiós','🙋'],['buenos días','🌅'],['gracias','🙏'],['por favor','🥺'],['sí','👍'],['no','👎'],
+    ['tengo hambre','🍽️'],['tengo sed','🥤'],['quiero ir al baño','🚻'],['no entiendo','🤷'],['me duele','🤕'],['ayúdame','🆘'],['maestra','👩‍🏫'],['maestro','👨‍🏫'],['compañero','🧒']]},
+  {id:'normas', ar:'في القسم', ic:'✋', es:'En clase', w:[['silencio','🤫'],['levanta la mano','✋'],['siéntate','🪑'],['escucha','👂'],['mira','👀'],['ponte en la fila','🚶'],
+    ['recoge','🧹'],['comparte','🤝'],['espera','⏳'],['ven aquí','👉'],['lávate las manos','🧼'],['muy bien','👏']]},
+  {id:'escuela', ar:'مدرستي', ic:'🎒', es:'Mi colegio', w:[['colegio','🏫'],['lápiz','✏️'],['libro','📖'],['cuaderno','📓'],['mochila','🎒'],['tijeras','✂️'],['regla','📏'],
+    ['silla','🪑'],['colores','🖍️'],['papel','📄'],['ordenador','💻'],['pelota','⚽']]},
+  {id:'familia', ar:'عائلتي', ic:'👨‍👩‍👧', es:'Mi familia', w:[['mamá','👩'],['papá','👨'],['bebé','👶'],['abuelo','👴'],['abuela','👵'],['hermano','👦'],['hermana','👧'],['familia','👨‍👩‍👧'],['casa','🏠']]},
+  {id:'cuerpo', ar:'جسمي', ic:'🧍', es:'Mi cuerpo', w:[['cabeza','🙂'],['ojo','👁️'],['oreja','👂'],['nariz','👃'],['boca','👄'],['mano','✋'],['pie','🦶'],['diente','🦷'],['brazo','💪'],['pierna','🦵'],['pelo','💇']]},
+  {id:'comida', ar:'الطعام', ic:'🍎', es:'La comida', w:[['pan','🍞'],['leche','🥛'],['agua','💧'],['manzana','🍎'],['plátano','🍌'],['naranja','🍊'],['huevo','🥚'],['queso','🧀'],
+    ['pollo','🍗'],['arroz','🍚'],['pescado','🐟'],['zumo','🧃'],['galleta','🍪'],['sopa','🍲']]},
+  {id:'animales', ar:'الحيوانات', ic:'🐶', es:'Los animales', w:[['perro','🐶'],['gato','🐱'],['pájaro','🐦'],['vaca','🐄'],['caballo','🐴'],['oveja','🐑'],['gallina','🐔'],['conejo','🐰'],
+    ['león','🦁'],['elefante','🐘'],['mono','🐒'],['ratón','🐭'],['pato','🦆'],['pez','🐠']]},
+  {id:'colores', ar:'الألوان', ic:'🎨', es:'Los colores', w:[['rojo','🔴'],['azul','🔵'],['amarillo','🟡'],['verde','🟢'],['color naranja','🟠'],['morado','🟣'],['negro','⚫'],['blanco','⚪'],['marrón','🟤']]},
+  {id:'numeros', ar:'الأرقام', ic:'🔢', es:'Los números', w:[['uno','1️⃣'],['dos','2️⃣'],['tres','3️⃣'],['cuatro','4️⃣'],['cinco','5️⃣'],['seis','6️⃣'],['siete','7️⃣'],['ocho','8️⃣'],['nueve','9️⃣'],['diez','🔟']]},
+  {id:'ropa', ar:'الملابس', ic:'👕', es:'La ropa', w:[['camisa','👔'],['pantalón','👖'],['vestido','👗'],['zapato','👞'],['calcetín','🧦'],['chaqueta','🧥'],['gorro','🧢'],['bufanda','🧣'],['guante','🧤']]},
+  {id:'hogar', ar:'بيتي', ic:'🏠', es:'Mi casa', w:[['puerta','🚪'],['ventana','🪟'],['cama','🛏️'],['silla','🪑'],['sofá','🛋️'],['ducha','🚿'],['llave','🔑'],['tele','📺'],['lámpara','💡'],['mesa','🍽️']]},
+  {id:'emociones', ar:'كيف أشعر؟', ic:'😀', es:'¿Cómo estoy?', w:[['contento','😀'],['triste','😢'],['enfadado','😠'],['asustado','😨'],['cansado','🥱'],['sorprendido','😲'],
+    ['nervioso','😬'],['enfermo','🤒'],['tengo frío','🥶'],['tengo calor','🥵']]},
+  {id:'acciones', ar:'ماذا أفعل', ic:'🏃', es:'Lo que hago', w:[['comer','🍴'],['beber','🥤'],['dormir','😴'],['correr','🏃'],['saltar','🦘'],['leer','📖'],['escribir','✍️'],['dibujar','🎨'],
+    ['cantar','🎤'],['bailar','💃'],['jugar','⚽'],['nadar','🏊'],['andar','🚶'],['escuchar','👂'],['hablar','🗣️']]},
+  {id:'recreo', ar:'اللعب والاستراحة', ic:'🧸', es:'Juegos y recreo', w:[['recreo','🔔'],['pelota','🏀'],['cometa','🪁'],['yoyó','🪀'],['coche de juguete','🏎️'],['puzle','🧩'],['dado','🎲'],
+    ['globo','🎈'],['osito','🧸'],['escondite','🙈'],['muñeca','🪆']]},
+  {id:'frutas', ar:'الفواكه والخضر', ic:'🍓', es:'Frutas y verduras', w:[['fresa','🍓'],['uva','🍇'],['pera','🍐'],['piña','🍍'],['sandía','🍉'],['melocotón','🍑'],['cereza','🍒'],['limón','🍋'],
+    ['tomate','🍅'],['zanahoria','🥕'],['patata','🥔'],['lechuga','🥬'],['cebolla','🧅'],['pepino','🥒'],['maíz','🌽']]},
+  {id:'aseo', ar:'النظافة', ic:'🧼', es:'Aseo', w:[['jabón','🧼'],['lavarse las manos','👐'],['cepillo de dientes','🪥'],['ducha','🚿'],['bañera','🛁'],['váter','🚽'],
+    ['papel higiénico','🧻'],['champú','🧴'],['pañuelo','🤧'],['espejo','🪞'],['grifo','🚰']]},
+  {id:'transporte', ar:'وسائل النقل', ic:'🚌', es:'Transportes', w:[['coche','🚗'],['autobús','🚌'],['bicicleta','🚲'],['tren','🚂'],['avión','✈️'],['barco','⛵'],['moto','🏍️'],['camión','🚚'],
+    ['taxi','🚕'],['ambulancia','🚑'],['coche de policía','🚓'],['camión de bomberos','🚒'],['helicóptero','🚁']]},
+  {id:'tiempo', ar:'الطقس', ic:'🌦️', es:'El tiempo', w:[['sol','☀️'],['lluvia','🌧️'],['nube','☁️'],['viento','💨'],['nieve','❄️'],['tormenta','⛈️'],['arcoíris','🌈'],
+    ['hace calor','🌡️'],['hace frío','🥶'],['paraguas','☂️'],['día','🌞'],['noche','🌙']]},
+  {id:'naturaleza', ar:'الطبيعة', ic:'🌳', es:'La naturaleza', w:[['árbol','🌳'],['flor','🌸'],['hoja','🍃'],['montaña','⛰️'],['río','🏞️'],['mar','🌊'],['playa','🏖️'],['piedra','🪨'],
+    ['campo','🌾'],['bosque','🌲'],['luna','🌙'],['estrella','⭐']]},
+  {id:'oficios', ar:'المهن', ic:'🧑‍🚒', es:'Profesiones', w:[['médico','🧑‍⚕️'],['policía','👮'],['bombero','🧑‍🚒'],['cocinero','🧑‍🍳'],['agricultor','🧑‍🌾'],['piloto','🧑‍✈️'],
+    ['mecánico','🧑‍🔧'],['pintor','🧑‍🎨'],['maestra','👩‍🏫'],['cartero','📮'],['dentista','🦷']]},
+  {id:'posiciones', ar:'أين وكيف', ic:'↕️', es:'Dónde y cómo', w:[['arriba','⬆️'],['abajo','⬇️'],['derecha','➡️'],['izquierda','⬅️'],['dentro','📥'],['fuera','📤'],['grande','🐘'],
+    ['pequeño','🐭'],['abierto','🔓'],['cerrado','🔒'],['caliente','🔥'],['frío','🧊']]},
+  {id:'formas', ar:'الأشكال', ic:'🔺', es:'Las formas', w:[['círculo','⭕'],['cuadrado','🟥'],['triángulo','🔺'],['estrella','⭐'],['corazón','❤️'],['rombo','🔷']]},
+  {id:'fino', ar:'أذن دقيقة', ic:'👂', es:'Oído fino', fino:true}
+];
+/* parejas que confunden los hablantes de árabe: p/b, e/i, o/u */
+const FINO = [['pa','ba'],['pe','be'],['pi','bi'],['po','bo'],['pu','bu'],['pe','pi'],['me','mi'],['le','li'],['se','si'],['te','ti'],['ne','ni'],
+  ['po','pu'],['mo','mu'],['lo','lu'],['so','su'],['to','tu'],['no','nu'],['pata','bata'],['peso','beso'],['pala','bala'],['mesa','misa'],['pela','pila'],['moda','muda']];
+
+VOCAB.forEach(t => { t.msa = t.ar; });
+let AR = AR_MSA, AR_UI = AR_UI_MSA;
+/* ================== DARIYA MARROQUÍ (escrita en letras árabes) ================== */
+const AR_UI_DAR = {
+  comprende:'قرا الجملة وقيس التصويرة اللي كتناسبها', comprendeb:'شوف التصويرة وقيس الجملة اللي كتقولها', ordena:'رتّب الكلمات باش تكوّن الجملة',
+  repasopoco:'تعلّم جوج حروف على الأقل اللول', album:'الألبوم ديال الملصقات: كمّل الحروف باش تربح ملصقات', graba:'سجّل صوتك وانت كتقرا ومن بعد تسنّت ليه',
+  toca:'قيس كلشي باش تسمعو', escucha:'تسنّت وقيس داكشي اللي سمعتي', vocal:'شنو هو الصوت اللي ناقص؟', traza:'بدا من النقطة الخضرا ودوّز صبعك فوق الحرف الرمادي',
+  caza:'قلّب على هاد الحرف وقيسو', empieza:'بأشنو كتبدا الكلمة؟', oyes:'شمن مقطع كتسمع فالكلمة؟', lee:'قرا الكلمة وقيس التصويرة ديالها',
+  forma:'تسنّت وركّب الكلمة', dicta:'تسنّت وكتب الكلمة', cartilla:'قرا وتسنّت', repite:'تسنّت وعاود بصوت عالي',
+  tocadib:'تسنّت وقيس التصويرة', fino:'تسنّت مزيان: شمن وحدة كتسمع؟', hola:'السلام! يالاه نقراو',
+  intro:'تسنّت للحرف الجديد، ومن بعد ختار نشاط', cerrada:'هاد الحرف مازال مسدود. كمّل الحرف اللي قبل', casi:'عاود حاول فوق الحرف الرمادي',
+  vacio:'كتب اللول بصبعك فوق الحرف', voc:'الكلمات الأولى', gana:'برافو! ربحتي النجوم', lectura:'قرا وتسنّت. قيس الكلمات باش تسمعهم',
+  brilla:'قيس داكشي اللي كيضوّي', conoces:'برافو! عرفتي الحرف'
+};
+const THEME_DAR = {clase:'السلام والقسم', normas:'فالقسم', escuela:'المدرسة ديالي', familia:'العائلة ديالي', cuerpo:'الجسم ديالي', comida:'الماكلة',
+  animales:'الحيوانات', colores:'الألوان', numeros:'الأرقام', ropa:'الحوايج', hogar:'الدار ديالي', emociones:'كيف داير؟', acciones:'شنو كندير',
+  recreo:'اللعب والريكري', frutas:'الفواكه والخضرة', aseo:'النظافة', transporte:'وسائل النقل', tiempo:'الجو', naturaleza:'الطبيعة', oficios:'الخدمات',
+  posiciones:'فين وكيفاش', formas:'الأشكال', fino:'ودن مزيانة'};
+const AR_DAR = Object.fromEntries(`papá=بابا|mamá=ماما|pie=قدم|pupa=جرح|lupa=مكبّرة|pila=بيل|ola=موجة|pulpo=أخطبوط|papel=كاغط|mapa=خريطة|miel=عسل|
+tomate=مطيشة|té=أتاي|tele=تلفازة|pato=بطة|pelota=كورة|maleta=باليزة|moto=موطور|lata=علبة|patata=بطاطا|sopa=سوبا|sapo=جرانة|oso=دب|sol=شمس|
+seta=فطر|pasta=معكرونة|sal=ملحة|seis=ستة|siete=سبعة|isla=جزيرة|nube=سحابة|mano=يد|luna=قمرة|pino=صنوبر|antena=أنتين|limón=حامضة|melón=بطيخ|
+piano=بيانو|uno=واحد|pan=خبز|mono=قرد|patinete=تروتينيت|pimiento=فلفلة|dado=زهر|dedo=صبع|dos=جوج|moneda=بياسة|diente=سنة|sandía=دلاح|
+sandalia=صندالة|foca=فقمة|foto=تصويرة|fideo=شعرية|sofá=كنبة|fuente=خصّة|delfín=دلفين|fantasma=عفريت|elefante=فيل|teléfono=تيليفون|pera=لنجاص|
+loro=ببغاء|toro=ثور|sirena=عروسة البحر|pirata=قرصان|mariposa=فرطيطو|dinero=فلوس|tarta=كاطو|puerta=باب|ordenador=أورديناتور|tenedor=فرشيطة|
+dinosaurio=ديناصور|perro=كلب|torre=برج|rata=طوبة|ratón=فار|rosa=وردة|ropa=حوايج|río=واد|reno=أيّل|radio=راديو|casa=دار|cama=ناموسية|coco=كوكو|
+taco=طاكوس|mosca=دبّانة|queso=فرماج|mosquito=شنيولة|copa=كاس|cometa=طيّارة ديال الورق|camión=كاميو|camisa=قميجة|caracol=ببّوش|carta=برية|canoa=فلوكة|
+cactus=صبّار|corona=تاج|caramelo=حلوة|cuaderno=كنّاش|carro=كرّوسة|carne=لحم|gato=مشّ|gusano=دودة|gafas=نضّاضر|mago=ساحر|gorro=طاقية|tortuga=فكرون|
+gota=قطرة|guitarra=كيتارة|águila=نسر|regalo=كادو|fuego=العافية|guante=ليكا|lagarto=زلكة|bota=بوط|boca=فم|bebé=بيبي|bolsa=صاك|lobo=ديب|barco=بابور|
+bus=طوبيس|abuelo=جدّ|abuela=جدّة|bandera=علام|beso=بوسة|árbol=شجرة|tambor=طبل|escoba=شطّابة|vaca=بقرة|vela=شمعة|uva=عنب|ventana=شرجم|nieve=تلج|
+avión=طيّارة|volcán=بركان|nave=صاروخ|pavo=دجاج الهند|violín=كمانجة|vestido=روبة|vaquero=كوبوي|nueve=تسعود|niño=ولد|niña=بنت|uña=ضفر|piña=أناناس|
+araña=رتيلة|montaña=جبل|castaña=قسطل|puño=قبضة|llave=ساروت|lluvia=الشتا|silla=كرسي|anillo=خاتم|gallina=دجاجة|pollito=فلّوس|ballena=حوت كبير|
+galleta=بيسكوي|llama=لاما|ardilla=سنجاب|caballo=عود|paella=باييلا|martillo=مطرقة|botella=قرعة|mantequilla=زبدة|yoyó=يويو|yate=يخت|payaso=بهلوان|
+rayo=برق|rey=ملك|chocolate=شكلاط|coche=طوموبيل|leche=حليب|noche=الليل|ducha=دوش|ocho=تمنية|chaqueta=جاكيطة|cuchara=معلقة|mochila=صاك ديال المدرسة|lechuga=خص|
+champú=شامبوان|jirafa=زرافة|ojo=عين|oreja=ودن|abeja=نحلة|conejo=قنية|reloj=مكانة|caja=صندوق|jabón=صابون|pájaro=طير|oveja=نعجة|espejo=مراية|
+tijeras=مقص|ajo=تومة|girasol=نوار الشمس|gema=جوهرة|genio=جنّي|gimnasia=الرياضة|colegio=المدرسة|zapato=سباط|zumo=عصير|taza=فنجان|lazo=عقدة|zorro=تعلب|
+pez=حوتة|lápiz=كريون|maíz=درة|cero=زيرو|cine=سينما|cebolla=بصلة|cepillo=شيتة ديال السنان|cerdo=حلّوف|cereza=حب الملوك|calcetín=تقاشر|pizza=بيتزا|erizo=قنفود|
+nariz=نيف|diez=عشرة|calabaza=كرعة|hada=جنّية|helado=لاكلاص|hoja=ورقة|hueso=عظم|humo=دخان|hilo=خيط|hormiga=نملة|huevo=بيضة|hielo=كلاصون|búho=موكة|
+hotel=أوطيل|hospital=سبيطار|hamburguesa=هامبورغر|hipopótamo=فرس النهر|zanahoria=خيزو|helicóptero=هيليكوبتير|pingüino=بطريق|taxi=طاكسي|saxofón=ساكسوفون|
+boxeo=بوكس|koala=كوالا|kárate=كاراطي|kimono=كيمونو|karaoke=كاراوكي|kiwi=كيوي|wifi=ويفي|sándwich=كاسكروط|pluma=ريشة|playa=البلاج|plato=طبسيل|
+planta=نبتة|plátano=بنان|flor=نوارة|globo=بالون|regla=مسطرة|blusa=بلوزة|bicicleta=بشكليطة|flan=فلان|ancla=مرساة|flamenco=فلامنكو|iglesia=كنيسة|
+tren=تران|fresa=فريز|brazo=دراع|cabra=معزة|libro=كتاب|grifo=روبيني|dragón=تنين|tigre=نمر|trigo=الزرع|estrella=نجمة|tres=تلاتة|cuatro=ربعة|
+cocodrilo=تمساح|cebra=حمار الوحش|princesa=أميرة|trompeta=طرومبيطة|tractor=تراكتور|sombrero=ترازة|cangrejo=قبقوب|grillo=زيز|imán=مغناطيس|
+unicornio=عود بقرن|hola=السلام|adiós=بسلامة|buenos días=صباح الخير|gracias=شكرا|por favor=عافاك|sí=إيه|no=لا|
+tengo hambre=أنا جيعان|tengo sed=أنا عطشان|quiero ir al baño=بغيت نمشي للطواليط|no entiendo=ما فهمتش|me duele=كيضرّني|ayúdame=عاوني|
+maestra=الأستاذة|maestro=الأستاذ|compañero=صاحبي|colores=الألوان|hermano=خويا|hermana=ختي|familia=العائلة|cabeza=راس|pierna=رجل|pelo=شعر|agua=الما|
+manzana=تفاحة|naranja=ليمونة|pollo=فرّوج|arroz=روز|pescado=حوت|león=سبع|rojo=حمر|azul=زرق|amarillo=صفر|verde=خضر|morado=موف|negro=كحل|
+blanco=بيض|marrón=قهوي|color naranja=ليموني|cinco=خمسة|pantalón=سروال|bufanda=كاشكول|lámpara=لامبة|mesa=طبلة|
+contento=فرحان|triste=حزين|enfadado=مقلّق|asustado=خايف|cansado=عيّان|sorprendido=مبهوت|nervioso=متوتّر|enfermo=مريض|tengo frío=فيا البرد|tengo calor=فيا السخانة|
+comer=كياكل|beber=كيشرب|dormir=كينعس|correr=كيجري|saltar=كينقز|leer=كيقرا|escribir=كيكتب|dibujar=كيرسم|cantar=كيغنّي|bailar=كيشطح|jugar=كيلعب|nadar=كيعوم|andar=كيتمشّى|
+sentarse=كيجلس|escuchar=كيتسنّت|hablar=كيهضر|lavar=كيغسل|
+autobús=طوبيس|ambulancia=لابيلانص|coche de policía=طوموبيل ديال البوليس|camión de bomberos=كاميو ديال البومبية|
+viento=الريح|tormenta=العاصفة|arcoíris=قوس قزح|hace calor=السخانة|hace frío=البرد|paraguas=مظلّ|día=النهار|
+melocotón=خوخ|pepino=خيار|
+lavarse las manos=غسل اليدين|cepillo de dientes=شيتة ديال السنان|papel higiénico=كاغط الطواليط|bañera=بانيو|váter=الطواليط|pañuelo=كلينيكس|
+mar=البحر|piedra=حجرة|campo=العروبية|bosque=الغابة|
+médico=طبيب|policía=بوليسي|bombero=بومبيي|cocinero=طبّاخ|agricultor=فلّاح|piloto=بيلوط|mecánico=ميكانيسيان|pintor=صبّاغ|cartero=البوسطاجي|dentista=طبيب السنان|
+recreo=الريكري|coche de juguete=طوموبيل ديال اللعب|puzle=بوزل|osito=نونورس|escondite=الغمّيضة|muñeca=بوبية|
+silencio=سكوت|levanta la mano=هز يدك|siéntate=جلس|escucha=تسنّت|mira=شوف|ponte en la fila=وقف فالصف|recoge=جمع حوايجك|comparte=قسم مع صحابك|espera=تسنّى|ven aquí=أجي لهنا|lávate las manos=غسل يديك|muy bien=برافو|
+arriba=الفوق|abajo=التحت|derecha=ليمن|izquierda=ليسر|dentro=الداخل|fuera=البرّا|grande=كبير|pequeño=صغير|abierto=محلول|cerrado=مسدود|caliente=سخون|frío=بارد|
+círculo=دايرة|cuadrado=مربّع|triángulo=مثلث|corazón=قلب|rombo=معيّن|
+micrófono=ميكرو|murciélago=طير الليل|música=الموسيقى|mundo=الدنيا|museo=متحف|tulipán=توليب|sushi=سوشي|donut=دونات|feria=مدينة الألعاب|furgoneta=كاميونيط|
+rugby=روكبي|rinoceronte=وحيد القرن|burrito=بوريتو|guepardo=فهد|vídeo=فيديو|voleibol=فولي|yegua=عودة|juguete=لعبة|waterpolo=كورة الما|planeta=كوكب|
+trébol=النفل|brócoli=بروكلي|suma=جمع`.split('|').map(x => x.trim()).filter(Boolean).map(x => x.split('=')));
 /* ================== UTILIDADES ================== */
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -667,7 +854,7 @@ const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7
 const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
 
 /* ================== ESTADO Y GUARDADO ================== */
-const STORE = 'letraALetraES_v1';
+const STORE = 'letraALetra_v1';
 const AVATARS = ['🦊','🐼','🐯','🐸','🐙','🦁','🐨','🐰','🐻','🐧','🦄','🐢','🐝','🦉','🐬','🦖','🐱','🐶','🐮','🐷','🐵','🐞','🦋','🐳','🦒','🐘','🦔','🐿️','🐲','🦜'];
 const DEFAULT_ORDER = LESSONS.map(l => l.id);
 const LBYID = Object.fromEntries(LESSONS.map(l => [l.id, l]));
@@ -675,7 +862,7 @@ const LBYID = Object.fromEntries(LESSONS.map(l => [l.id, l]));
 function blankState(){
   return {
     profiles: [{id:'clase', name:'Toda la clase', avatar:'🏫', guest:true, unlocked:0, prog:{}}],
-    settings: {order:[...DEFAULT_ORDER], rate:0.8, voice:'', pin:'1234', fx:true, sylColors:false, bookSize:1, pron:{}, muted:false, font:'lig'}
+    settings: {order:[...DEFAULT_ORDER], rate:0.8, voice:'', pin:'1234', fx:true, sylColors:false, bookSize:1, arSpeak:true, biAll:true, pron:{}, muted:false, font:'lig', arVariant:'dar'}
   };
 }
 function fixState(d){
@@ -766,8 +953,11 @@ const TTS = {
     if (S.settings.voice) v = es.find(x => x.voiceURI === S.settings.voice) || null;
     if (!v) v = es.find(x => /es[-_]ES/i.test(x.lang) && /google/i.test(x.name)) || es.find(x => /es[-_]ES/i.test(x.lang)) || es[0] || null;
     this.voice = v;
+    const ar = speechSynthesis.getVoices().filter(x => /^ar([-_]|$)/i.test(x.lang));
+    this.arVoice = ar.find(x => /MA/i.test(x.lang)) || ar.find(x => /google/i.test(x.name)) || ar[0] || null;
     return es;
   },
+  arVoice:null,
   /* Android: cancel() es asíncrono y puede borrar la frase que se pide justo después;
      las voces cambian de objeto al recargarse; «es_ES» no es un código válido. Se tienen en cuenta aquí. */
   android: /android/i.test(navigator.userAgent), lastErr: '', _u: null,
@@ -819,7 +1009,7 @@ const RecDB = {
     if (this.db) return Promise.resolve(this.db);
     return new Promise((res, rej) => {
       if (!window.indexedDB) return rej('sin IndexedDB');
-      const r = indexedDB.open('letraALetraESAudio', 1);
+      const r = indexedDB.open('letraALetraAudio', 1);
       r.onupgradeneeded = () => r.result.createObjectStore('rec');
       r.onsuccess = () => { this.db = r.result; res(this.db); };
       r.onerror = () => rej(r.error);
@@ -931,24 +1121,57 @@ function introText(l){
   if (l.vowel) return `Esta es la ${l.name}. ${cap(l.name)} de ${l.clave[0]}.`;
   return `Esta es la ${l.name}. ${cap(l.name)} de ${l.clave[0]}.`;
 }
-/* ================== AYUDANTES ================== */
+/* ================== APOYO EN ÁRABE: AYUDANTES ================== */
 let P = null;
+const arOn = () => !!(P && P.ar);
+const bi = () => !!(S.settings.biAll || arOn());
+const AR_ACT_MSA = {ordena:'رتّب الجملة', comprende:'أقرأ وأفهم', conoce:'تعرّف على الحرف', traza:'اكتب بإصبعك', caza:'اصطد الحروف', escucha:'استمع واختر', empieza:'بماذا تبدأ؟', lee:'اقرأ وصِل', forma:'كوّن الكلمة', dicta:'اكتب الكلمة', cartilla:'كتاب القراءة', vrep:'استمع وكرّر', vtoca:'استمع والمس'};
+const AR_ACT_DAR = {ordena:'رتّب الجملة', comprende:'نقرا ونفهم', conoce:'تعرّف على الحرف', traza:'كتب بصبعك', caza:'صيد الحروف', escucha:'تسنّت وختار', empieza:'بأشنو كتبدا؟', lee:'قرا وربط', forma:'ركّب الكلمة', dicta:'كتب الكلمة', cartilla:'كتاب القراية', vrep:'تسنّت وعاود', vtoca:'تسنّت وقيس'};
+let AR_ACT = AR_ACT_MSA;
+/* dariya (por defecto) o árabe estándar */
+const isDar = () => S.settings.arVariant !== 'msa';
+const A2 = (msa, dar) => isDar() ? dar : msa;
+function applyVariant(){
+  const d = isDar();
+  AR = d ? {...AR_MSA, ...AR_DAR} : AR_MSA;
+  AR_UI = d ? {...AR_UI_MSA, ...AR_UI_DAR} : AR_UI_MSA;
+  AR_ACT = d ? AR_ACT_DAR : AR_ACT_MSA;
+  VOCAB.forEach(t => { t.ar = d && THEME_DAR[t.id] ? THEME_DAR[t.id] : t.msa; });
+}
+applyVariant();
+const bl = (es, ar) => bi() ? `<bdi dir="ltr">${es}</bdi> | <bdi lang="ar" dir="rtl" style="font-family:'Noto Naskh Arabic',sans-serif">${ar}</bdi>` : es;
+const arSmall = t => t ? `<span class="ar" lang="ar" dir="rtl" style="font-size:1rem">${esc(t)}</span>` : '';
+const arLine = key => bi() && AR_UI[key] ? `<p class="ar" lang="ar" dir="rtl">${AR_UI[key]}</p>` : '';
+const arChip = es => { const t = AR[es] || AR[es.toLowerCase()]; return bi() && t ? `<button class="ar-chip" data-ar="${esc(t)}" lang="ar" dir="rtl">${esc(t)}</button>` : ''; };
+async function sayAr(t){ if (!S.settings.arSpeak || !TTS.arVoice) return; await TTS.speak(t, {voice:TTS.arVoice, keep:true, rate:.9}); }
 async function speakIntro(l){
   const my = TTS.seq + 1;
-  await instr(introText(l));
+  await instr(introText(l), 'intro');
   if (l.vowel) return;
-  for (const s of l.sil.flat()){ if (TTS.seq !== my) return; await speakSyl(s, {keep:true}); await sleep(150); }
+  for (const s of l.sil.map(mix).flat()){ if (TTS.seq !== my) return; await speakSyl(s, {keep:true}); await sleep(150); }
 }
-async function instr(text){ await TTS.speak(text); }
-/* la solución aparece grande, con su dibujo, y se lee */
-async function solution(es, e){
+async function instr(esText, key){
+  const my = TTS.seq + 1;
+  await TTS.speak(esText);
+  if (bi() && AR_UI[key] && TTS.seq === my) await sayAr(AR_UI[key]);
+}
+/* solución en doble idioma */
+async function solution(es, e, force){
+  const t = AR[es] || AR[es.toLowerCase()], showAr = !!((force || bi()) && t);
   document.querySelectorAll('.sol-pop').forEach(x => x.remove());
   const d = document.createElement('div'); d.className = 'sol-pop';
-  d.innerHTML = `<div class="sol">${e ? `<span class="se">${e}</span>` : ''}<span class="ses">${esc(es)}</span></div>`;
+  d.innerHTML = `<div class="sol">${e ? `<span class="se">${e}</span>` : ''}<span class="ses">${esc(es)}</span>${showAr ? `<span class="ar" lang="ar" dir="rtl">${esc(t)}</span>` : ''}</div>`;
   document.body.appendChild(d);
   await TTS.speak(es);
-  await sleep(350); d.remove();
+  if (showAr && d.isConnected){ if (TTS.arVoice && S.settings.arSpeak) await sayAr(t); else await sleep(900); }
+  await sleep(250); d.remove();
 }
+document.addEventListener('click', e => {
+  const c = e.target.closest('.ar-chip'); if (!c) return;
+  e.stopPropagation();
+  if (TTS.arVoice && S.settings.arSpeak) TTS.speak(c.dataset.ar, {voice:TTS.arVoice, rate:.9});
+  else toast('No hay voz en árabe en este dispositivo');
+});
 
 /* ================== NAVEGACIÓN ================== */
 let screenId = 'home';
@@ -967,13 +1190,15 @@ const starsOf = (key, act) => (P.prog[key] || {})[act] || 0;
 const totalStars = p => Object.values(p.prog).reduce((s, o) => s + Object.values(o).reduce((a, b) => a + b, 0), 0);
 
 function renderHome(){
+  $('#home-ar').classList.toggle('hidden', !S.settings.biAll); $('#home-ar').textContent = A2('هيا نقرأ ونكتب!', 'يالاه نقراو ونكتبو!');
+  $('#home-name').classList.toggle('hidden', !S.settings.biAll);
   const g = $('#who-grid');
-  g.innerHTML = `<button class="start-btn" id="btn-start">▶ Empezar</button>`;
+  g.innerHTML = `<button class="start-btn" id="btn-start">▶ ${bl('Empezar', A2('ابدأ', 'بدا'))}</button>`;
   $('#btn-start').onclick = () => pickProfile(S.profiles[0]);
 }
 function pickProfile(p){
   FX.init(); P = p; go('map');
-  instr('¡Hola! Vamos a leer.');
+  instr('¡Hola! Vamos a leer.', 'hola');
 }
 /* ================== ACTIVIDADES DISPONIBLES ================== */
 const ACT_LIST = ['conoce','traza','caza','escucha','empieza','lee','forma','dicta','ordena','comprende','cartilla'];
@@ -1076,20 +1301,20 @@ function lessonStars(i){ const l = lessonAt(i), acts = availableActs(i); return 
 
 /* ================== MAPA DE LETRAS ================== */
 function renderMap(){
-  $('#map-title').textContent = 'Mis letras';
+  $('#map-title').textContent = bi() ? 'Mis letras | ' + A2('حروفي', 'الحروف ديالي') : 'Mis letras';
   $('#map-stars').textContent = '⭐ ' + totalStars(P);
   const m = $('#map'); m.innerHTML = '';
   let curEl = null;
   const nDone = order().filter((l, i) => lessonDone(i)).length;
   const top = document.createElement('div'); top.className = 'map-top';
-  top.innerHTML = `<button class="btn sun" id="btn-rev">🔁 Repaso</button><button class="btn" id="btn-alb">📒 Mi álbum<span class="alb-n">${nDone}/${order().length}</span></button>`;
+  top.innerHTML = `<button class="btn sun" id="btn-rev">🔁 ${bl('Repaso', A2('مراجعة', 'مراجعة'))}</button><button class="btn" id="btn-alb">📒 ${bl('Mi álbum', A2('ألبومي', 'الألبوم ديالي'))}<span class="alb-n">${nDone}/${order().length}</span></button>`;
   m.appendChild(top);
   top.querySelector('#btn-rev').onclick = () => startReview();
   top.querySelector('#btn-alb').onclick = () => openAlbum();
   const isTrab = l => l.id === 'TL' || l.id === 'TR';
-  const secs = [{t:'Vocales', f: l => l.vowel}, {t:'Consonantes', f: l => !l.vowel && !isTrab(l)}, {t:'Trabadas', f: isTrab}];
+  const secs = [{t:'Vocales', ar:'الحروف المتحركة', f: l => l.vowel}, {t:'Consonantes', ar:'الحروف الساكنة', f: l => !l.vowel && !isTrab(l)}, {t:'Trabadas', ar:'المقاطع المركّبة', f: isTrab}];
   const grids = secs.map(sec => {
-    const h = document.createElement('h3'); h.className = 'map-h'; h.innerHTML = `<span>${sec.t}</span>`;
+    const h = document.createElement('h3'); h.className = 'map-h'; h.innerHTML = `<span>${sec.t}</span>${bi() ? `<span class="ar" lang="ar" dir="rtl" style="font-size:1.1rem">${sec.ar}</span>` : ''}`;
     const g = document.createElement('div'); g.className = 'map';
     m.appendChild(h); m.appendChild(g); return g;
   });
@@ -1102,7 +1327,7 @@ function renderMap(){
     b.innerHTML = `<span class="lt ${label.length > 2 ? 'long' : ''}">${esc(label)}</span><span class="ss">${n ? starRow(n) : hechos ? `<span class="prog">${hechos}/${acts.length}</span>` : ''}</span>`;
     b.setAttribute('aria-label', 'Letra ' + l.name + (un ? '' : ', cerrada'));
     b.onclick = () => {
-      if (!un){ FX.bad(); instr('Esta letra todavía está cerrada. Termina la anterior.'); return; }
+      if (!un){ FX.bad(); instr('Esta letra todavía está cerrada. Termina la anterior.', 'cerrada'); return; }
       openLesson(i);
     };
     if (cur) curEl = b;
@@ -1111,6 +1336,7 @@ function renderMap(){
   if (curEl) setTimeout(() => curEl.scrollIntoView({block:'center', behavior:'smooth'}), 120);
 }
 $('#btn-book').onclick = () => openBook(P.guest ? 0 : Math.min(P.unlocked, order().length - 1), false);
+$('#btn-voc').onclick = () => openVocab();
 
 /* ================== LECCIÓN ================== */
 let LI = 0;
@@ -1120,7 +1346,9 @@ function openLesson(i){
   $('#lesson-title').textContent = lessonTitle(l);
   const kw = l.clave[0];
   $('#lesson-hero').innerHTML = `<button class="big-letter" id="lh-let" aria-label="Escuchar la letra">${bigLetter(l, true)}</button>
-    <button class="key-card" id="lh-key"><span class="em">${l.clave[1]}</span>${decodable(kw, i) ? `<span class="kw">${wordHTML(kw, l.keys)}</span>` : ''}</button>`;
+    <button class="key-card" id="lh-key"><span class="em">${l.clave[1]}</span>${decodable(kw, i) ? `<span class="kw">${wordHTML(kw, l.keys)}</span>` : ''}${arChip(kw)}</button>`;
+  const old = $('#lesson-ar'); if (old) old.remove();
+  if (bi()) $('#lesson-hero').insertAdjacentHTML('afterend', `<div id="lesson-ar" style="margin-top:10px">${arLine('intro')}</div>`);
   $('#lh-let').onclick = () => speakIntro(l);
   $('#lh-key').onclick = () => TTS.speak(kw);
   const g = $('#acts'); g.innerHTML = '';
@@ -1128,7 +1356,7 @@ function openLesson(i){
     const d = ACTS[id], s = starsOf(l.id, id);
     const b = document.createElement('button');
     b.className = 'act' + (s ? ' done' : '');
-    b.innerHTML = `<span class="ic">${d.ic}</span><span class="lb">${d.lb}</span><span class="ss">${'★'.repeat(s)}${'☆'.repeat(3 - s)}</span>`;
+    b.innerHTML = `<span class="ic">${d.ic}</span><span class="lb">${d.lb}</span>${bi() ? arSmall(AR_ACT[id]) : ''}<span class="ss">${'★'.repeat(s)}${'☆'.repeat(3 - s)}</span>`;
     b.onclick = () => id === 'cartilla' ? openBook(i, true) : startAct(id, {kind:'lesson', i});
     g.appendChild(b);
   });
@@ -1149,9 +1377,9 @@ function startAct(id, ctx){
 }
 $('#btn-act-say').onclick = () => { if (A && A.sayFn) A.sayFn(); };
 $('#btn-act-back').onclick = () => { const a = A; A = null; backFrom(a); };
-function backFrom(a){ if (!a) return go('map'); if (a.ctx.kind === 'review') return go('map'); openLesson(a.ctx.i); }
+function backFrom(a){ if (!a) return go('map'); if (a.ctx.kind === 'review') return go('map'); if (a.ctx.kind === 'voc') openVocab(a.ctx.theme); else openLesson(a.ctx.i); }
 function dots(n, cur){ const rv = A && A.ctx && A.ctx.kind === 'review' ? `<span class="rv">🔁 ${A.ctx.step + 1}/${A.ctx.plan.length}</span>` : ''; $('#dots').innerHTML = rv + Array.from({length: n}, (_, k) => `<i class="${k < cur ? 'on' : k === cur ? 'now' : ''}"></i>`).join(''); }
-function progKey(a){ return a.l.id; }
+function progKey(a){ return a.ctx.kind === 'voc' ? 'voc:' + a.ctx.theme.id : a.l.id; }
 
 /* en el repaso cada actividad tiene solo 2 rondas */
 const RL = (a, n) => a.ctx.kind === 'review' ? Math.min(n, 2) : n;
@@ -1175,12 +1403,12 @@ function showResult(a, st, unl, sticker){
   const next = unl ? lessonAt(a.i + 1) : null;
   const msg = st === 3 ? '¡Genial!' : st === 2 ? '¡Muy bien!' : '¡Bien hecho!';
   $('#result').innerHTML = `<div class="stars">${[1,2,3].map(n => `<span class="${n <= st ? 'on' : ''}">⭐</span>`).join('')}</div>
-    <h2>${msg}</h2>
+    <h2>${msg}</h2>${bi() ? `<p class="ar" lang="ar" dir="rtl">${AR_UI.gana}</p>` : ''}
     ${unl ? `<div class="unlock">🔓 Nueva letra: <span class="lig" style="color:var(--red);font-size:1.6rem">${esc(next.id === 'gü' ? 'güe' : next.show)}</span></div>` : ''}
-    ${sticker ? `<div class="newstk m${sticker.n}"><span class="se">${sticker.l.clave[1]}</span><span class="st">${starRow(sticker.n)}</span><span>🎉 ${sticker.up ? `¡Tu pegatina sube a ${MEDAL[sticker.n]}!` : `¡Nueva pegatina de ${MEDAL[sticker.n]}!`}</span>${sticker.n < 3 ? `<span class="tip">Consigue 3 estrellas en todos los juegos de esta letra para que sea de oro.</span>` : ''}<button class="btn small" id="r-alb">📒 Ver mi álbum</button></div>` : ''}
-    <div class="row center" style="margin-top:26px"><button class="btn" id="r-again">🔁 Otra vez</button><button class="btn primary" id="r-go">Seguir ➡️</button></div>`;
+    ${sticker ? `<div class="newstk m${sticker.n}"><span class="se">${sticker.l.clave[1]}</span><span class="st">${starRow(sticker.n)}</span><span>🎉 ${sticker.up ? `¡Tu pegatina sube a ${MEDAL[sticker.n]}!` : `¡Nueva pegatina de ${MEDAL[sticker.n]}!`}</span>${sticker.n < 3 ? `<span class="tip">Consigue 3 estrellas en todos los juegos de esta letra para que sea de oro.</span>` : ''}<button class="btn small" id="r-alb">📒 ${bl('Ver mi álbum', A2('ألبومي', 'الألبوم ديالي'))}</button></div>` : ''}
+    <div class="row center" style="margin-top:26px"><button class="btn" id="r-again">🔁 ${bl('Otra vez', A2('مرة أخرى', 'عاود'))}</button><button class="btn primary" id="r-go">${bl('Seguir', A2('تابع', 'زيد'))} ➡️</button></div>`;
   FX.win(); burst(st);
-  instr(`${msg} Has ganado ${['', 'una estrella', 'dos estrellas', 'tres estrellas'][st]}.` + (unl ? ` ¡Ya puedes aprender una letra nueva!` : '') + (sticker ? (sticker.up ? ` ¡Tu pegatina sube a ${MEDAL[sticker.n]}!` : ` ¡Y una pegatina de ${MEDAL[sticker.n]} para tu álbum!`) + (sticker.n < 3 ? ' Consigue tres estrellas en todos los juegos para que sea de oro.' : '') : ''));
+  instr(`${msg} Has ganado ${['', 'una estrella', 'dos estrellas', 'tres estrellas'][st]}.` + (unl ? ` ¡Ya puedes aprender una letra nueva!` : '') + (sticker ? (sticker.up ? ` ¡Tu pegatina sube a ${MEDAL[sticker.n]}!` : ` ¡Y una pegatina de ${MEDAL[sticker.n]} para tu álbum!`) + (sticker.n < 3 ? ' Consigue tres estrellas en todos los juegos para que sea de oro.' : '') : ''), 'gana');
   $('#r-again').onclick = () => a.id === 'repaso' ? startReview() : a.id === 'cartilla' ? openBook(a.i, true) : startAct(a.id, a.ctx);
   const ra = $('#r-alb'); if (ra) ra.onclick = () => openAlbum();
   $('#r-go').onclick = () => backFrom(a);
@@ -1234,7 +1462,7 @@ RUN.conoce = a => {
   const letterBtn = single
     ? `<button class="big-letter" data-step="let"><span class="write-in">${esc(l.show)}</span></button><button class="big-letter up-b" data-step="up"><span class="write-in up">${esc(l.up)}</span></button>`
     : `<button class="big-letter" data-step="let">${bigLetter(l, true)}</button>`;
-  st.innerHTML = `<p class="prompt" id="c-prompt">Toca lo que brilla</p>
+  st.innerHTML = `<p class="prompt" id="c-prompt">Toca lo que brilla</p>${arLine('brilla')}
     <div class="row center" style="gap:6px">${letterBtn}</div>
     <button class="key-card" data-step="key"><span class="em">${l.clave[1]}</span>${decodable(kw, a.i) ? `<span class="kw">${wordHTML(kw, l.keys)}</span>` : ''}</button>
     ${l.vowel
@@ -1253,9 +1481,9 @@ RUN.conoce = a => {
   const done = async () => {
     a.done = true; st.querySelectorAll('.next').forEach(x => x.classList.remove('next'));
     FX.win(); burst(2);
-    $('#c-done').innerHTML = `<div class="done-banner">✅ ¡Muy bien! Ya conoces ${l.vowel ? 'la ' + l.name : 'la ' + l.name}</div>`;
+    $('#c-done').innerHTML = `<div class="done-banner">✅ ¡Muy bien! Ya conoces ${l.vowel ? 'la ' + l.name : 'la ' + l.name}${bi() ? `<span class="ar" lang="ar" dir="rtl">${AR_UI.conoces}</span>` : ''}</div>`;
     $('#c-done').scrollIntoView({block:'center', behavior:'smooth'});
-    await instr(`¡Muy bien! Ya conoces la ${l.name}.`);
+    await instr(`¡Muy bien! Ya conoces la ${l.name}.`, 'conoces');
     if (alive(a)) finish(a, 3);
   };
   steps.forEach(stp => {
@@ -1277,7 +1505,7 @@ RUN.conoce = a => {
     };
   });
   glow();
-  a.sayFn = () => { const n = nextStep(); instr(n ? `Vamos a conocer la ${l.name}. Toca lo que brilla.` : `Ya conoces la ${l.name}.`); };
+  a.sayFn = () => { const n = nextStep(); instr(n ? `Vamos a conocer la ${l.name}. Toca lo que brilla.` : `Ya conoces la ${l.name}.`, 'brilla'); };
   a.sayFn();
 };
 
@@ -1394,20 +1622,20 @@ RUN.traza = async a => {
     if (k >= items.length) return finish(a);
     dots(items.length, k); fails = 0;
     const it = items[k];
-    st.innerHTML = `<p class="prompt">Empieza en el punto verde y repasa la letra gris</p><div id="tr-host" style="width:min(760px,100%)"></div>
-      <div class="row center"><button class="btn" id="tr-say">🔊 Escuchar</button><button class="btn" id="tr-clear">🧽 Borrar</button><button class="btn primary" id="tr-ok">✔️ ¡Listo!</button></div>`;
+    st.innerHTML = `<p class="prompt">Empieza en el punto verde y repasa la letra gris</p>${arLine('traza')}<div id="tr-host" style="width:min(760px,100%)"></div>
+      <div class="row center"><button class="btn" id="tr-say">🔊 ${bl('Escuchar', A2('استمع', 'تسنّت'))}</button><button class="btn" id="tr-clear">🧽 ${bl('Borrar', A2('امسح', 'مسح'))}</button><button class="btn primary" id="tr-ok">✔️ ${bl('¡Listo!', A2('انتهيت', 'صافي'))}</button></div>`;
     const tr = makeTracer($('#tr-host'), it.t);
     const sayIt = o => it.syl ? speakSyl(it.syl, o) : TTS.speak(it.say, o);
-    a.sayFn = async () => { const my = TTS.seq + 1; await instr('Empieza en el punto verde y repasa con el dedo.'); if (TTS.seq === my) await sayIt({keep:true}); };
+    a.sayFn = async () => { const my = TTS.seq + 1; await instr('Empieza en el punto verde y repasa con el dedo.', 'traza'); if (TTS.seq === my) await sayIt({keep:true}); };
     $('#tr-say').onclick = () => sayIt();
     $('#tr-clear').onclick = () => tr.clear();
     $('#tr-ok').onclick = async () => {
       const r = tr.check();
-      if (r.empty){ instr('Primero repasa la letra con el dedo.'); return; }
+      if (r.empty){ instr('Primero repasa la letra con el dedo.', 'vacio'); return; }
       if (r.pass){ await praise(); k++; next(); return; }
       fails++; a.errors++; FX.bad();
       if (fails >= 2){ await TTS.speak('¡Buen intento! Vamos con la siguiente.'); k++; next(); }
-      else { instr('Casi. Repasa por encima de la letra gris.'); tr.clear(); }
+      else { instr('Casi. Repasa por encima de la letra gris.', 'casi'); tr.clear(); }
     };
     if (k === 0) a.sayFn(); else sayIt();
   };
@@ -1431,7 +1659,7 @@ RUN.caza = a => {
     dots(ROUNDS, r);
     const nT = 4 + Math.floor(Math.random() * 2);
     const cells = shuffle([...Array.from({length: nT}, () => pick(spec.t)), ...Array.from({length: 12 - nT}, () => pick(pool))]);
-    st.innerHTML = `<p class="prompt">${esc(say)}</p><div class="word-show" style="font-size:2.6rem">${esc(spec.t.slice(0, 5).join('  '))}</div><div class="hunt" id="hunt"></div>`;
+    st.innerHTML = `<p class="prompt">${esc(say)}</p>${arLine('caza')}<div class="word-show" style="font-size:2.6rem">${esc(spec.t.slice(0, 5).join('  '))}</div><div class="hunt" id="hunt"></div>`;
     let found = 0;
     cells.forEach(c => {
       const b = document.createElement('button'); b.className = 'opt'; b.textContent = c;
@@ -1444,7 +1672,7 @@ RUN.caza = a => {
       };
       $('#hunt').appendChild(b);
     });
-    a.sayFn = () => instr(say);
+    a.sayFn = () => instr(say, 'caza');
     if (r === 0) a.sayFn(); else TTS.speak(say);
   };
   round();
@@ -1464,7 +1692,7 @@ RUN.escucha = a => {
     dots(N, k);
     const t = targets[k];
     const opts = l.vowel ? shuffle(['a','e','i','o','u']) : optionSet(l, t);
-    st.innerHTML = `<p class="prompt">Escucha y toca la que suena</p><button class="say" id="e-say" aria-label="Escuchar">🔊</button><div class="opts ${opts.length >= 5 ? 'five' : ''}" id="e-opts"></div>`;
+    st.innerHTML = `<p class="prompt">Escucha y toca la que suena</p>${arLine('escucha')}<button class="say" id="e-say" aria-label="Escuchar">🔊</button><div class="opts ${opts.length >= 5 ? 'five' : ''}" id="e-opts"></div>`;
     a.sayFn = () => speakSyl(t);
     $('#e-say').onclick = a.sayFn;
     makeOpts(a, $('#e-opts'), opts, {
@@ -1472,14 +1700,14 @@ RUN.escucha = a => {
       onBad: () => speakSyl(t),
       onOk: async () => { FX.ok(); await sleep(500); const u = tokenize(t); if (l.vowel || !u.some(x => x.v)) { await praise(); k++; step1(); } else step2(t, u); }
     });
-    if (k === 0) instr('Escucha y toca la que suena.').then(() => { if (alive(a) && k === 0) a.sayFn(); });
+    if (k === 0) instr('Escucha y toca la que suena.', 'escucha').then(() => { if (alive(a) && k === 0) a.sayFn(); });
     else a.sayFn();
   };
   const step2 = (t, u) => {
     if (!alive(a)) return;
     const cons = u.filter(x => !x.v).map(x => x.t).join(''), vow = u.filter(x => x.v).map(x => x.t).join('');
     const pre = u[0].v ? '' : cons, post = u[0].v ? cons : '';
-    st.innerHTML = `<p class="prompt">¿Qué vocal falta?</p>
+    st.innerHTML = `<p class="prompt">¿Qué vocal falta?</p>${arLine('vocal')}
       <div class="word-show"><span class="nl">${esc(pre)}</span><span class="blank" id="blank">&nbsp;</span><span class="nl">${esc(post)}</span></div>
       <button class="say sm" id="e-say">🔊</button><div class="opts five" id="e-opts"></div>`;
     a.sayFn = async () => { const my = TTS.seq + 1; await TTS.speak('¿Qué vocal suena en…'); if (TTS.seq === my) await speakSyl(t, {keep:true}); };
@@ -1507,8 +1735,8 @@ RUN.empieza = a => {
     const inWord = w.syl.map(s => s.t);
     const opts = mode === 'vowel' ? shuffle(['a','e','i','o','u']) : optionSet(l, ans, inWord.filter(s => plain(s) !== plain(ans)), 5);
     const q = mode === 'vowel' ? `¿Con qué vocal empieza ${w.w}?` : mode === 'first' ? `¿Cómo empieza ${w.w}?` : `¿Qué sílaba oyes en ${w.w}?`;
-    st.innerHTML = `<p class="prompt">${mode === 'any' ? '¿Qué sílaba oyes?' : '¿Cómo empieza?'}</p>
-      <button class="pic" id="m-pic" aria-label="Escuchar la palabra">${w.e}</button><div class="opts ${opts.length >= 5 ? 'five' : ''}" id="m-opts"></div>`;
+    st.innerHTML = `<p class="prompt">${mode === 'any' ? '¿Qué sílaba oyes?' : '¿Cómo empieza?'}</p>${arLine(mode === 'any' ? 'oyes' : 'empieza')}
+      <button class="pic" id="m-pic" aria-label="Escuchar la palabra">${w.e}</button>${arChip(w.w)}<div class="opts ${opts.length >= 5 ? 'five' : ''}" id="m-opts"></div>`;
     a.sayFn = () => TTS.speak(q);
     $('#m-pic').onclick = () => TTS.speak(w.w);
     makeOpts(a, $('#m-opts'), opts, {
@@ -1516,7 +1744,7 @@ RUN.empieza = a => {
       onBad: () => TTS.speak(w.w),
       onOk: async () => { FX.ok(); await solution(w.w, w.e); await praise(); k++; round(); }
     });
-    if (k === 0 || mode !== list[k - 1].mode) instr(q); else a.sayFn();
+    if (k === 0 || mode !== list[k - 1].mode) instr(q, mode === 'any' ? 'oyes' : 'empieza'); else a.sayFn();
   };
   round();
 };
@@ -1535,8 +1763,8 @@ RUN.lee = a => {
     const dist = [];
     [...pref, ...rest].forEach(x => { if (dist.length < 3 && !used.has(x.e)){ used.add(x.e); dist.push(x); } });
     const opts = shuffle([w, ...dist]);
-    st.innerHTML = `<p class="prompt">Lee y toca su dibujo</p><div class="word-show">${wordHTML(w.w, l.keys)}</div><div class="opts" id="l-opts"></div>`;
-    a.sayFn = () => instr('Lee la palabra y toca su dibujo.');
+    st.innerHTML = `<p class="prompt">Lee y toca su dibujo</p>${arLine('lee')}<div class="word-show">${wordHTML(w.w, l.keys)}</div><div class="opts" id="l-opts"></div>`;
+    a.sayFn = () => instr('Lee la palabra y toca su dibujo.', 'lee');
     makeOpts(a, $('#l-opts'), opts, {
       emo: true, render: x => x.e, isOk: x => x.w === w.w,
       onBad: n => { if (n >= 1) TTS.speak(w.w); },
@@ -1560,8 +1788,8 @@ function buildRun(a, pool, kind){
     const extra = kind === 'forma' ? shuffle(sameLetter(l, parts)).slice(0, 2) : letterDistract(a.i, parts, 3);
     const tiles = shuffle([...parts, ...extra].map((t, ix) => ({t, ix})));
     const key = kind === 'forma' ? 'forma' : 'dicta';
-    st.innerHTML = `<p class="prompt">${kind === 'forma' ? 'Escucha y forma la palabra' : 'Escucha y escribe la palabra'}</p>
-      <div class="row center"><button class="pic" id="f-pic" aria-label="Escuchar">${w.e || '👂'}</button><button class="say sm" id="f-say" aria-label="Escuchar">🔊</button></div>
+    st.innerHTML = `<p class="prompt">${kind === 'forma' ? 'Escucha y forma la palabra' : 'Escucha y escribe la palabra'}</p>${arLine(key)}
+      <div class="row center"><button class="pic" id="f-pic" aria-label="Escuchar">${w.e || '👂'}</button><button class="say sm" id="f-say" aria-label="Escuchar">🔊</button></div>${arChip(w.w)}
       <div class="slots" id="slots"></div><div class="tiles" id="tiles"></div>`;
     const filled = Array(parts.length).fill(null);
     const slotEls = parts.map((_, j) => { const s = document.createElement('button'); s.className = 'slot'; s.onclick = () => unfill(j); $('#slots').appendChild(s); return s; });
@@ -1590,7 +1818,7 @@ function buildRun(a, pool, kind){
     }
     a.sayFn = () => TTS.speak(w.w);
     $('#f-pic').onclick = a.sayFn; $('#f-say').onclick = a.sayFn;
-    if (k === 0) instr((kind === 'forma' ? 'Forma la palabra: ' : 'Escribe la palabra: ') + w.w); else a.sayFn();
+    if (k === 0) instr((kind === 'forma' ? 'Forma la palabra: ' : 'Escribe la palabra: ') + w.w, key); else a.sayFn();
   };
   round();
 }
@@ -1607,7 +1835,7 @@ RUN.ordena = a => {
     const s = list[k], words = sentWords(s);
     let tiles, g = 0;
     do { tiles = shuffle(words.map((t, ix) => ({t, ix}))); } while (tiles.map(x => x.t).join(' ') === words.join(' ') && ++g < 30);
-    st.innerHTML = `<p class="prompt">Ordena las palabras y forma la frase</p>
+    st.innerHTML = `<p class="prompt">Ordena las palabras y forma la frase</p>${arLine('ordena')}
       <button class="say sm" id="o-say" aria-label="Escuchar la frase">🔊</button>
       <div class="slots words" id="slots"></div><div class="tiles words" id="tiles"></div>`;
     const filled = Array(words.length).fill(null);
@@ -1635,7 +1863,7 @@ RUN.ordena = a => {
       if (!alive(a)) return;
       good.forEach((ok, j) => { if (!ok) unfill(j); });
     }
-    a.sayFn = () => instr('Ordena las palabras y forma la frase.');
+    a.sayFn = () => instr('Ordena las palabras y forma la frase.', 'ordena');
     $('#o-say').onclick = () => TTS.speak(s);
     if (k === 0) a.sayFn();
   };
@@ -1659,19 +1887,19 @@ RUN.comprende = a => {
       const inS = new Set(sentWords(it.s).map(w => w.toLowerCase())), used = new Set([it.w.e]), dist = [];
       const cand = shuffle(wordsKnown(a.i).filter(x => x.e && !x.name && !inS.has(x.w)));
       [...cand.filter(x => x.w[0] === it.w.w[0]), ...cand, ...shuffle(EMO)].forEach(x => { if (dist.length < 3 && !used.has(x.e) && !inS.has(x.w)){ used.add(x.e); dist.push(x); } });
-      st.innerHTML = `<p class="prompt">Lee la frase y toca su dibujo</p>
+      st.innerHTML = `<p class="prompt">Lee la frase y toca su dibujo</p>${arLine('comprende')}
         <button class="sent-show" id="cm-s" aria-label="Frase">${sentHTML(it.s, l.keys, false)}</button><div class="opts" id="cm-opts"></div>`;
       $('#cm-s').onclick = () => TTS.speak(it.s);
       makeOpts(a, $('#cm-opts'), shuffle([it.w, ...dist]), {emo: true, render: x => x.e, isOk: x => x.w === it.w.w, onOk: done});
-      a.sayFn = () => instr('Lee la frase y toca su dibujo.');
+      a.sayFn = () => instr('Lee la frase y toca su dibujo.', 'comprende');
     } else {
       /* mira el dibujo y toca la frase que lo dice */
       const dist = [], es = new Set([it.w.e]);
       shuffle(pool.filter(x => x.s !== it.s)).forEach(x => { if (dist.length < 2 && !es.has(x.w.e)){ es.add(x.w.e); dist.push(x); } });
-      st.innerHTML = `<p class="prompt">Mira el dibujo y toca la frase que lo dice</p>
+      st.innerHTML = `<p class="prompt">Mira el dibujo y toca la frase que lo dice</p>${arLine('comprendeb')}
         <div class="pic" aria-hidden="true">${it.w.e}</div><div class="sent-opts" id="cm-opts"></div>`;
       makeOpts(a, $('#cm-opts'), shuffle([it, ...dist]), {render: x => sentHTML(x.s, l.keys, false), isOk: x => x.s === it.s, onOk: done});
-      a.sayFn = () => instr('Mira el dibujo y toca la frase que lo dice.');
+      a.sayFn = () => instr('Mira el dibujo y toca la frase que lo dice.', 'comprendeb');
     }
     if (k < 2) a.sayFn();
   };
@@ -1680,7 +1908,7 @@ RUN.comprende = a => {
 RUN.dicta = a => buildRun(a, poolDicta(a.i), 'dicta');
 /* ================== CARTILLA ================== */
 let BK = {i: 0, fromAct: false};
-function openBook(i, fromAct){ BK = {i, fromAct}; go('book'); renderPage(); instr('Lee y escucha. Toca las palabras para oírlas.'); }
+function openBook(i, fromAct){ BK = {i, fromAct}; go('book'); renderPage(); instr('Lee y escucha. Toca las palabras para oírlas.', 'lectura'); }
 $('#btn-book-back').onclick = () => BK.fromAct ? openLesson(BK.i) : go('map');
 $('#bk-prev').onclick = () => { if (BK.i > 0){ BK.i--; renderPage(); } };
 $('#bk-next').onclick = () => { if (BK.i < order().length - 1 && isUnlocked(BK.i + 1)){ BK.i++; renderPage(); } else toast('Esa página se abrirá cuando aprendas la letra'); };
@@ -1706,7 +1934,7 @@ function renderPage(){
   const pg = $('#page'); pg.style.setProperty('--bs', S.settings.bookSize);
   $('#bk-syl').classList.toggle('primary', sylc);
   $('#bk-prev').disabled = i === 0;
-  let h = `<span class="num">${i + 1}</span><div class="ph"><span class="big-letter">${bigLetter(l)}</span><button class="pic" style="font-size:4rem" id="pg-key">${l.clave[1]}</button></div>`;
+  let h = `<span class="num">${i + 1}</span><div class="ph"><span class="big-letter">${bigLetter(l)}</span><button class="pic" style="font-size:4rem" id="pg-key">${l.clave[1]}</button>${arChip(l.clave[0])}</div>`;
   if (l.vowel){
     const kv = order().slice(0, i + 1).filter(x => x.vowel).map(x => x.id);
     const combos = [l.id, l.up];
@@ -1718,9 +1946,9 @@ function renderPage(){
     const ws = wordsFor(i);
     h += `<h3>Palabras</h3>` + (ws.length ? `<div class="c-words">${ws.map(w => `<button data-say="${esc(w.w)}">${wordHTML(w.w, l.keys, sylc)}</button>`).join('')}</div>` : `<p class="empty">Con más letras llegarán las palabras.</p>`);
     const ss = sentsFor(i);
-    h += `<h3>Leo frases</h3>` + (ss.length ? `<p class="hint">🎙️ Pulsa el micrófono, lee la frase en voz alta y escúchate.</p>` : '') + (ss.length ? ss.map((s, j) => `<div class="c-sent"><div class="ctrl"><button class="mini" data-read="${j}" aria-label="Escuchar la frase">🔊</button><button class="mini" data-slow="${j}" aria-label="Leer despacio">🐢</button><button class="mini" data-rec="${j}" aria-label="Grabarme leyendo">🎙️</button><button class="mini ${MYREC[l.id + ':' + j] ? '' : 'hidden'}" data-mine="${j}" aria-label="Escuchar mi grabación">▶️</button></div><div class="txt" id="st-${j}">${sentHTML(s.s, l.keys, sylc)}</div></div>`).join('') : `<p class="empty">Pronto habrá frases.</p>`);
+    h += `<h3>Leo frases</h3>` + (ss.length ? `<p class="hint">🎙️ Pulsa el micrófono, lee la frase en voz alta y escúchate.</p>${arLine('graba')}` : '') + (ss.length ? ss.map((s, j) => `<div class="c-sent"><div class="ctrl"><button class="mini" data-read="${j}" aria-label="Escuchar la frase">🔊</button><button class="mini" data-slow="${j}" aria-label="Leer despacio">🐢</button><button class="mini" data-rec="${j}" aria-label="Grabarme leyendo">🎙️</button><button class="mini ${MYREC[l.id + ':' + j] ? '' : 'hidden'}" data-mine="${j}" aria-label="Escuchar mi grabación">▶️</button></div><div class="txt" id="st-${j}">${sentHTML(s.s, l.keys, sylc)}</div></div>`).join('') : `<p class="empty">Pronto habrá frases.</p>`);
   }
-  h += `<div class="row center" style="margin-top:24px"></div><div class="row center"><button class="btn sun" id="pg-done">✅ ¡Lo he leído!</button></div>`;
+  h += `<div class="row center" style="margin-top:24px">${arLine('cartilla')}</div><div class="row center"><button class="btn sun" id="pg-done">✅ ${bl('¡Lo he leído!', A2('قرأتُ', 'قريت'))}</button></div>`;
   pg.innerHTML = h;
   pg.querySelectorAll('[data-syl]').forEach(b => b.onclick = () => { pg.querySelectorAll('.reading').forEach(x => x.classList.remove('reading')); b.classList.add('reading'); speakSyl(b.dataset.syl).then(() => b.classList.remove('reading')); });
   pg.querySelectorAll('[data-say]').forEach(b => b.onclick = () => { pg.querySelectorAll('.reading').forEach(x => x.classList.remove('reading')); b.classList.add('reading'); TTS.speak(b.dataset.say).then(() => b.classList.remove('reading')); });
@@ -1762,7 +1990,7 @@ async function recReading(btn, key, text, playBtn){
 const REV_ACTS = ['escucha','empieza','lee','forma','dicta','ordena','comprende','caza'];
 function startReview(){
   const learned = order().map((l, i) => i).filter(i => lessonStars(i).got > 0);
-  if (learned.length < 2){ toast('Para repasar, primero trabaja al menos dos letras'); instr('Para repasar, primero trabaja al menos dos letras.'); return; }
+  if (learned.length < 2){ toast('Para repasar, primero trabaja al menos dos letras'); instr('Para repasar, primero trabaja al menos dos letras.', 'repasopoco'); return; }
   const plan = [], used = new Set();
   for (let n = 0; n < 6; n++){
     let j, act, g = 0;
@@ -1783,10 +2011,10 @@ function reviewStep(a){
 }
 
 /* ================== ÁLBUM DE PEGATINAS ================== */
-function openAlbum(){ go('album'); renderAlbum(); instr('Mi álbum de pegatinas. Completa todas las actividades de una letra para ganar su pegatina.'); }
+function openAlbum(){ go('album'); renderAlbum(); instr('Mi álbum de pegatinas. Completa todas las actividades de una letra para ganar su pegatina.', 'album'); }
 function renderAlbum(){
   const ls = order(); let n = 0;
-  $('#alb-title').innerHTML = `Mi álbum`;
+  $('#alb-title').innerHTML = `${bl('Mi álbum', A2('ألبومي', 'الألبوم ديالي'))}`;
   let gold = 0;
   $('#album').innerHTML = ls.map((l, i) => { const m = letterStars(i); if (m) n++; if (m === 3) gold++;
     return `<button class="stk ${m ? 'got m' + m : ''}" data-i="${i}" data-m="${m}" aria-label="${m ? 'Pegatina de ' + esc(l.clave[0]) + ', ' + MEDAL[m] : 'Pegatina sin conseguir'}"><span class="se">${m ? l.clave[1] : '❔'}</span><span class="sl">${esc(l.id === 'gü' ? 'güe' : l.show.split(' ')[0])}</span>${m ? `<span class="st">${starRow(m)}</span><span class="md">${MEDAL[m]}</span>` : ''}</button>`; }).join('');
@@ -1813,6 +2041,97 @@ function applyFont(){
   document.body.classList.remove('f-lig', 'f-imp', 'f-may'); document.body.classList.add('f-' + fmode());
   document.querySelectorAll('[data-pdf]').forEach(el => el.setAttribute('href', FONTS[fmode()].pdf));
 }
+
+/* ================== PRIMERAS PALABRAS ================== */
+let VT = null;
+function openVocab(theme){
+  VT = theme || null; go('voc');
+  const m = $('#voc-main');
+  if (!theme){
+    $('#voc-title').textContent = 'Primeras palabras';
+    m.innerHTML = `<div class="intro-note">Vocabulario oral para quien empieza con el español: escucha, repite y reconoce.<p class="ar" lang="ar" dir="rtl" style="text-align:right">${A2('كلمات أولى باللغة الإسبانية: استمع، كرّر، وتعرّف', 'كلمات أولى بالسبليونية: تسنّت، عاود، وتعرّف')}</p></div><div class="themes" id="themes"></div>`;
+    VOCAB.forEach(t => {
+      const key = 'voc:' + t.id, s = t.fino ? starsOf(key, 'fino') : Math.min(starsOf(key, 'vrep'), starsOf(key, 'vtoca'));
+      const b = document.createElement('button'); b.className = 'theme';
+      b.innerHTML = `<span class="ic">${t.ic}</span><span class="lb">${esc(t.es)}</span>${arSmall(t.ar)}<span class="ss">${'★'.repeat(s)}${'☆'.repeat(3 - s)}</span>`;
+      b.onclick = () => t.fino ? startAct('fino', {kind: 'voc', theme: t}) : openVocab(t);
+      $('#themes').appendChild(b);
+    });
+    instr('Primeras palabras. Escucha, repite y aprende.', 'voc');
+    return;
+  }
+  $('#voc-title').textContent = theme.es + ' | ' + theme.ar;
+  const key = 'voc:' + theme.id;
+  m.innerHTML = `<div class="acts" style="margin-top:0">
+    <button class="act" id="v-rep"><span class="ic">🗣️</span><span class="lb">Escucha y repite</span>${arSmall(AR_ACT.vrep)}<span class="ss">${'★'.repeat(starsOf(key, 'vrep'))}${'☆'.repeat(3 - starsOf(key, 'vrep'))}</span></button>
+    <button class="act" id="v-toca"><span class="ic">👆</span><span class="lb">Escucha y toca</span>${arSmall(AR_ACT.vtoca)}<span class="ss">${'★'.repeat(starsOf(key, 'vtoca'))}${'☆'.repeat(3 - starsOf(key, 'vtoca'))}</span></button></div>
+    <div class="themes" style="margin-top:22px" id="v-words"></div>`;
+  $('#v-rep').onclick = () => startAct('vrep', {kind: 'voc', theme});
+  $('#v-toca').onclick = () => startAct('vtoca', {kind: 'voc', theme});
+  theme.w.forEach(([es, e]) => {
+    const b = document.createElement('button'); b.className = 'theme'; b.style.minHeight = '120px';
+    b.innerHTML = `<span class="ic">${e}</span><span class="lb">${esc(es)}</span>${arSmall(AR[es])}`;
+    b.onclick = () => solution(es, e, true);
+    $('#v-words').appendChild(b);
+  });
+}
+$('#btn-voc-back').onclick = () => VT ? openVocab() : go('map');
+
+RUN.vrep = a => {
+  const t = a.ctx.theme, st = $('#stage'), list = t.w; let k = 0;
+  const show = () => {
+    if (!alive(a)) return;
+    if (k >= list.length) return finish(a, 3);
+    dots(list.length, k);
+    const [es, e] = list[k];
+    st.innerHTML = `<p class="prompt">Escucha y repite en voz alta</p>${arLine('repite')}
+      <button class="vcard" id="vc"><span class="pic">${e}</span><span class="es">${esc(es)}</span>${AR[es] ? `<span class="ar" lang="ar" dir="rtl" style="font-size:clamp(1.5rem,6vw,2.2rem)">${esc(AR[es])}</span>` : ''}</button>
+      <div class="row center"><button class="say sm" id="vs" aria-label="Escuchar">🔊</button><button class="btn primary" id="vn">${bl('Siguiente', A2('التالي', 'اللي من بعد'))} ➡️</button></div>`;
+    a.sayFn = async () => { const my = TTS.seq + 1; await TTS.speak(es); if (TTS.seq !== my || !alive(a)) return; if (AR[es]) await sayAr(AR[es]); await sleep(300); if (TTS.seq === my && alive(a)) TTS.speak(es, {keep:true}); };
+    $('#vc').onclick = a.sayFn; $('#vs').onclick = a.sayFn;
+    $('#vn').onclick = () => { FX.tap(); k++; show(); };
+    if (k === 0) instr('Escucha y repite.', 'repite').then(() => { if (alive(a) && k === 0) a.sayFn(); }); else a.sayFn();
+  };
+  show();
+};
+RUN.vtoca = a => {
+  const t = a.ctx.theme, st = $('#stage');
+  const list = shuffle(t.w).slice(0, Math.min(8, t.w.length)); let k = 0;
+  const round = () => {
+    if (!alive(a)) return;
+    if (k >= list.length) return finish(a);
+    dots(list.length, k);
+    const [es] = list[k];
+    const opts = shuffle([list[k], ...shuffle(t.w.filter(x => x[0] !== es)).slice(0, 3)]);
+    st.innerHTML = `<p class="prompt">Escucha y toca el dibujo</p>${arLine('tocadib')}<button class="say" id="vt-say" aria-label="Escuchar">🔊</button><div class="opts" id="vt-opts"></div>`;
+    a.sayFn = () => TTS.speak(es);
+    $('#vt-say').onclick = a.sayFn;
+    makeOpts(a, $('#vt-opts'), opts, {
+      emo: true, render: x => x[1], isOk: x => x[0] === es, onBad: () => TTS.speak(es),
+      onOk: async () => { FX.ok(); await solution(es, list[k][1], true); await praise(); k++; round(); }
+    });
+    if (k === 0) instr('Escucha y toca el dibujo.', 'tocadib').then(() => { if (alive(a) && k === 0) a.sayFn(); }); else a.sayFn();
+  };
+  round();
+};
+RUN.fino = a => {
+  const st = $('#stage'), list = shuffle(FINO).slice(0, 8); let k = 0;
+  const round = () => {
+    if (!alive(a)) return;
+    if (k >= list.length) return finish(a);
+    dots(list.length, k);
+    const pair = list[k], t = pick(pair);
+    st.innerHTML = `<p class="prompt">Escucha bien: ¿cuál suena?</p>${arLine('fino')}<button class="say" id="fi-say" aria-label="Escuchar">🔊</button><div class="opts" id="fi-opts"></div>`;
+    a.sayFn = () => TTS.speak(t, {rate: Math.max(.55, S.settings.rate - .1)});
+    $('#fi-say').onclick = a.sayFn;
+    makeOpts(a, $('#fi-opts'), shuffle(pair), {
+      render: s => esc(s), isOk: s => s === t, onBad: () => a.sayFn(),
+      onOk: async () => { await praise(); k++; round(); }
+    });
+    if (k === 0) instr('Escucha bien. ¿Cuál suena?', 'fino').then(() => { if (alive(a) && k === 0) a.sayFn(); }); else a.sayFn();
+  };
+  round();
+};
 
 /* ================== PANEL DEL MAESTRO ================== */
 let tTab = 'alumnos';
@@ -1854,10 +2173,11 @@ function renderTeacher(){
 function tAlumnos(body){
   const prevP = P; P = S.profiles[0];
   const rows = order().map((l, j) => { const s = lessonStars(j); return `<tr><td class="lig" style="color:var(--red);font-size:1.2rem">${esc(l.show)}</td><td><span style="color:#E0A800">${starRow(letterStars(j))}</span> <small style="color:var(--soft)">(${s.got}/${s.max})</small></td><td>${lessonDone(j) ? '✅' : ''}</td></tr>`; }).join('');
+  const voc = VOCAB.map(t => { const o = P.prog['voc:' + t.id] || {}; const g = Object.values(o).reduce((x, y) => x + y, 0); return g ? `<tr><td>${t.ic} ${esc(t.es)}</td><td>⭐ ${g}</td><td></td></tr>` : ''; }).join('');
   P = prevP;
   body.innerHTML = `<div class="card"><h3>Progreso en este dispositivo</h3><p>Todas las letras están abiertas: cada niño entra libremente. Las estrellas se guardan en este navegador.</p>
     <div class="row" style="margin-bottom:12px"><button class="btn small danger" id="t-rs">↺ Reiniciar estrellas</button></div>
-    <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Letra</th><th>Estrellas</th><th></th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
+    <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Letra</th><th>Estrellas</th><th></th></tr></thead><tbody>${rows}${voc}</tbody></table></div></div>`;
   $('#t-rs').onclick = async () => { if (await askYesNo('Reiniciar estrellas', 'Se borrarán todas las estrellas de este dispositivo.', 'Reiniciar', true)){ S.profiles[0].prog = {}; save(); renderTeacher(); toast('Estrellas reiniciadas'); } };
 }
 function tLetra(body){
@@ -1884,11 +2204,18 @@ function tLetras(body){
 }
 function tVoz(body){
   const es = TTS.pick();
+  const arList = TTS.has ? speechSynthesis.getVoices().filter(v => /^ar/i.test(v.lang)) : [];
   body.innerHTML = `<div class="card"><h3>Voz en español</h3>
     ${!TTS.has ? '<p>Este navegador no permite leer en voz alta.</p>' : es.length ? '' : '<p>Cargando voces… Si no aparece ninguna, instala una voz en español en el sistema.</p>'}
     <div class="field"><label for="t-voice">Voz</label><select id="t-voice"><option value="">Automática (español de España)</option>${es.map(v => `<option value="${esc(v.voiceURI)}" ${v.voiceURI === S.settings.voice ? 'selected' : ''}>${esc(v.name)} (${esc(v.lang)})</option>`).join('')}</select></div>
     <div class="field"><label for="t-rate">Velocidad: <span id="t-rv">${S.settings.rate}</span></label><input type="range" id="t-rate" min="0.5" max="1.2" step="0.05" value="${S.settings.rate}"></div>
     <div class="row"><button class="btn small" id="t-test">🔊 Probar</button></div></div>
+    <div class="card"><h3>Voz en árabe</h3>
+    <p>${arList.length ? `Voz encontrada: ${esc(TTS.arVoice ? TTS.arVoice.name : arList[0].name)}.` : 'No hay voz en árabe en este dispositivo: las ayudas en árabe se verán escritas. En Chromebook se pueden añadir voces en Configuración, Accesibilidad, Texto a voz.'} La dariya se escribe con letras árabes y la lee la voz árabe del sistema, así que su pronunciación es aproximada.</p>
+    <div class="field"><label for="t-var">Tipo de árabe</label><select id="t-var"><option value="dar" ${isDar() ? 'selected' : ''}>Dariya marroquí (el árabe que se habla en casa)</option><option value="msa" ${isDar() ? '' : 'selected'}>Árabe estándar (el de la escuela y los libros)</option></select></div>
+    <label class="row" style="gap:10px;font-weight:700;color:var(--ink);margin-bottom:8px"><input type="checkbox" id="t-biall" style="width:26px;height:26px" ${S.settings.biAll ? 'checked' : ''}> Instrucciones y soluciones en doble idioma (español y árabe)</label>
+    <label class="row" style="gap:10px;font-weight:700;color:var(--ink)"><input type="checkbox" id="t-arsp" style="width:26px;height:26px" ${S.settings.arSpeak ? 'checked' : ''}> Leer en voz alta las ayudas en árabe</label>
+    ${arList.length ? '<div class="row" style="margin-top:10px"><button class="btn small" id="t-artest">🔊 Probar árabe</button></div>' : ''}</div>
     <div class="card"><h3>Pronunciación de sílabas</h3><p>La voz del sistema a veces deletrea una sílaba suelta o la lee en otro idioma. La solución más segura es <b>grabar tu voz</b> (⏺): la app usará tu grabación en todas las actividades. También puedes escribir otra forma de decirla y probarla.</p>
     <div class="field"><label for="t-pl">Letra</label><select id="t-pl">${order().filter(x => !x.vowel).map(x => `<option value="${x.id}">${esc(x.show)}</option>`).join('')}</select></div>
     <div class="row" style="margin-bottom:10px"><button class="btn small primary" id="t-recall">⏺ Grabar todas seguidas</button></div>
@@ -1897,13 +2224,16 @@ function tVoz(body){
   $('#t-voice').onchange = e => { S.settings.voice = e.target.value; save(); TTS.pick(); };
   $('#t-rate').oninput = e => { S.settings.rate = +e.target.value; $('#t-rv').textContent = S.settings.rate; save(); };
   $('#t-test').onclick = async () => { if (S.settings.muted){ toast('El sonido está desactivado: actívalo con el botón 🔇'); return; } TTS.lastErr = ''; await TTS.speak('Mi mamá me mima. Papá pule el palo.'); if (TTS.lastErr && TTS.lastErr !== 'interrupted') toast('La voz ha dado un error: ' + TTS.lastErr + '. Prueba otra voz o reinicia el navegador.'); else if (!speechSynthesis.getVoices().length) toast('Este navegador no tiene voces instaladas'); };
+  $('#t-arsp').onchange = e => { S.settings.arSpeak = e.target.checked; save(); };
+  $('#t-var').onchange = e => { S.settings.arVariant = e.target.value; save(); applyVariant(); toast(isDar() ? 'Ayudas en dariya' : 'Ayudas en árabe estándar'); };
+  $('#t-biall').onchange = e => { S.settings.biAll = e.target.checked; save(); };
   $('#t-fx').onchange = e => { S.settings.fx = e.target.checked; save(); };
   const drawPron = () => {
     const l = LBYID[$('#t-pl').value], list = [...l.sil.flat(), ...(l.inv || [])];
     $('#t-prows').innerHTML = list.map(s => { const k = plain(s), has = REC.has(k); return `<div class="row prow" data-k="${esc(k)}" style="gap:10px"><span class="lig" style="min-width:80px;font-size:1.5rem;color:var(--ink)">${esc(s)}</span>
       <input data-p="${esc(k)}" value="${esc(S.settings.pron[k] || '')}" placeholder="${esc(sayAuto(s))}" ${has ? 'disabled' : ''} style="font:inherit;padding:8px 10px;border:3px solid var(--rule2);border-radius:12px;max-width:150px">
       <button class="mini" data-t="${esc(s)}" aria-label="Probar">🔊</button><button class="mini" data-r="${esc(k)}" aria-label="Grabar">⏺</button>
-      ${has ? `<button class="mini" data-d="${esc(k)}" aria-label="Borrar grabación">🗑️</button><span class="rec-badge">🎙️ tu voz</span>` : ''}</div>`; }).join('');
+      ${has ? `<button class="mini" data-d="${esc(k)}" aria-label="Borrar grabación">🗑️</button><span class="ar-badge">🎙️ tu voz</span>` : ''}</div>`; }).join('');
     $('#t-prows').querySelectorAll('input').forEach(i => i.onchange = () => { const v = i.value.trim(); if (v) S.settings.pron[i.dataset.p] = v; else delete S.settings.pron[i.dataset.p]; save(); toast('Pronunciación guardada'); });
     $('#t-prows').querySelectorAll('[data-t]').forEach(b => b.onclick = () => speakSyl(b.dataset.t));
     $('#t-prows').querySelectorAll('[data-r]').forEach(b => b.onclick = () => recordOne(b.dataset.r, b, drawPron));
@@ -1911,6 +2241,7 @@ function tVoz(body){
     $('#t-recall').onclick = () => recordAll([...l.sil.flat(), ...(l.inv || [])], drawPron);
   };
   $('#t-pl').onchange = drawPron; drawPron();
+  const at = $('#t-artest'); if (at) at.onclick = () => TTS.speak('مرحبًا! هيا نقرأ', {voice: TTS.arVoice});
 }
 function tCopia(body){
   body.innerHTML = `<div class="card"><h3>Copia de seguridad</h3><p>Descarga las estrellas, los ajustes y tus grabaciones de sílabas. Carga la copia en cada Chromebook para que todos usen tu voz.</p>
@@ -1920,7 +2251,7 @@ function tCopia(body){
     <div class="card"><h3>↺ Restaurar valores originales</h3><p>Deshace los cambios de configuración de este dispositivo. Las estrellas no se tocan.</p>
       <div style="display:grid;gap:8px;margin-bottom:12px">
         <label style="display:flex;gap:10px;align-items:center"><input type="checkbox" data-r="order" checked style="width:24px;height:24px;flex:0 0 auto"> <span><b>Orden de las letras</b> <span style="color:var(--soft)">(vocales, p, l, m, t, s, n, d, f, r, rr, b, v, c, g…)</span></span></label>
-        <label style="display:flex;gap:10px;align-items:center"><input type="checkbox" data-r="voz" checked style="width:24px;height:24px;flex:0 0 auto"> <span><b>Voz y sonido</b> <span style="color:var(--soft)">(sonido activado, voz automática, velocidad 0,8, efectos)</span></span></label>
+        <label style="display:flex;gap:10px;align-items:center"><input type="checkbox" data-r="voz" checked style="width:24px;height:24px;flex:0 0 auto"> <span><b>Voz y sonido</b> <span style="color:var(--soft)">(sonido activado, voz automática, velocidad 0,8, dariya, doble idioma, efectos)</span></span></label>
         <label style="display:flex;gap:10px;align-items:center"><input type="checkbox" data-r="pron" checked style="width:24px;height:24px;flex:0 0 auto"> <span><b>Pronunciación escrita de sílabas</b> <span style="color:var(--soft)">(lo escrito a mano en el panel)</span></span></label>
         <label style="display:flex;gap:10px;align-items:center"><input type="checkbox" data-r="font" checked style="width:24px;height:24px;flex:0 0 auto"> <span><b>Tipo de letra</b> <span style="color:var(--soft)">(ligada)</span></span></label>
         <label style="display:flex;gap:10px;align-items:center"><input type="checkbox" data-r="book" checked style="width:24px;height:24px;flex:0 0 auto"> <span><b>Cartilla en pantalla</b> <span style="color:var(--soft)">(tamaño de letra y sílabas de colores)</span></span></label>
@@ -1963,7 +2294,7 @@ function tCopia(body){
     if (!await askYesNo('Restaurar valores originales', 'Se restaurará: ' + sel.map(k => names[k]).join(', ') + '.', 'Restaurar', sel.includes('rec'))) return;
     const d = blankState().settings, st = S.settings;
     if (sel.includes('order')){ st.order = [...d.order]; resetCache(); }
-    if (sel.includes('voz')){ ['voice', 'rate', 'fx', 'muted'].forEach(k => st[k] = d[k]); drawSnd(); TTS.pick(); }
+    if (sel.includes('voz')){ ['voice', 'rate', 'fx', 'arSpeak', 'biAll', 'arVariant', 'muted'].forEach(k => st[k] = d[k]); drawSnd(); applyVariant(); TTS.pick(); }
     if (sel.includes('pron')) st.pron = {};
     if (sel.includes('font')){ st.font = d.font; applyFont(); }
     if (sel.includes('book')){ st.bookSize = d.bookSize; st.sylColors = d.sylColors; }
